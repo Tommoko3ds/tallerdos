@@ -12,7 +12,12 @@ const Header = () => {
         Inicio
       </a>
       <button className=" bg-gray-300 rounded-lg p-4 text-black hover:text-gray-30" href="#acerca-de">
-        perfil
+      <img
+                    src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png"
+                    alt="Eye Icon"
+                    width="20"
+                    height="20"
+                  />
       </button>
       
       <button className="ml-4 bg-white rounded-lg p-3 text-black hover:text-gray-30" href="#acerca-de">

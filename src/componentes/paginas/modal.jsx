@@ -1,271 +1,200 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-
-const CrudComponent = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [jobData, setJobData] = useState({
-    titulo: '',
-    descripcion: '',
-    tipo: 'reparacion-mecanica', 
-    estatus: 'en-proceso', 
-    horas:'',
-    precioMateriales: '',
-    precioTotal: '',
-  });
-  const [jobsList, setJobsList] = useState([]);
-  const [showDetails, setShowDetails] = useState({}); 
-  const [inProcessJobs, setInProcessJobs] = useState([]);
-  const [completedJobs, setCompletedJobs] = useState([]);
+const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
+  const [titulo, setTitulo] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [horas, setHoras] = useState('');
+  const [estatus, setEstatus] = useState('En proceso');
+  const [precioMateriales, setPrecioMateriales] = useState('');
+  const [tipoTrabajo, setTipoTrabajo] = useState('ReparacionMecanica');
+  const [precioTotal, setPrecioTotal] = useState(0);
 
 
-  const handleInputChange = (e) => {
-    setJobData({
-      ...jobData,
-      [e.target.name]: e.target.value,
-    });
+
+  const handleTipoTrabajoChange = (event) => {
+    setTipoTrabajo(event.target.value);
   };
 
-  const handleModalOpen = () => {
-    setModalOpen(true);
+  const calcularPrecioTotal = () => {
+    const horasFloat = parseFloat(horas);
+    const precioMaterialesFloat = parseFloat(precioMateriales);
+
+    let precioTipoTrabajo = 0;
+
+    switch (tipoTrabajo) {
+      case 'ReparacionMecanica':
+        precioTipoTrabajo = horasFloat * 350 + precioMaterialesFloat * 1.1;
+        break;
+      case 'ReparacionChapaPintura':
+        precioTipoTrabajo = horasFloat * 350 + precioMaterialesFloat * 1.3;
+        break;
+      case 'Revision':
+        precioTipoTrabajo = horasFloat * 350 + 450;
+        break;
+      default:
+        break;
+    }
+
+    setPrecioTotal(precioTipoTrabajo);
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    calcularPrecioTotal();
 
-  const toggleDetails = (jobId) => {
-    setShowDetails((prevShowDetails) => ({
-      ...prevShowDetails,
-      [jobId]: !prevShowDetails[jobId],
-    }));
-  };
-  const calculatePrecioTotal = () => {
-    const horas = parseFloat(jobData.horas);
-    const precioMateriales = parseFloat(jobData.precioMateriales);
+    // Verificar que el campo precioMateriales tiene un valor antes de enviar la solicitud
+    if (precioMateriales === '') {
+      console.error('El campo precioMateriales no puede estar vacío');
+      return;  // Salir de la función si precioMateriales está vacío
+    }
 
-    if (!isNaN(horas) && !isNaN(precioMateriales)) {
-      const calculatedPrecioTotal = horas * precioMateriales;
+    try {
+      const response = await axios.post('http://localhost:5000/api/jobs', {
+        titulo,
+        descripcion,
+        tipo: tipoTrabajo,
+        estatus,
+        horas,
+        precioMateriales,
+        precioTotal,
+      });
 
-      setJobData((prevData) => ({
-        ...prevData,
-        precioTotal: calculatedPrecioTotal.toString(), 
-      }));
+      console.log(response.data.message);
+
+      if (response.status === 200) {
+        // Actualizar la lista de trabajos
+        setTrabajos([...trabajos, response.data.trabajo]);
+
+        // Limpiar los campos
+        setTitulo('');
+        setDescripcion('');
+        setHoras('');
+        setEstatus('En proceso');
+        setPrecioMateriales('');
+        setTipoTrabajo('ReparacionMecanica');
+        setPrecioTotal(0);
+
+        // Puedes realizar acciones adicionales después de guardar, como cerrar el modal
+        closeModal();
+      } else {
+        console.error('Error al guardar trabajo:', response.data.error);
+        // Puedes manejar el error de alguna manera
+      }
+    } catch (error) {
+      console.error('Error de red al enviar datos:', error);
+      // Puedes manejar el error de red de alguna manera
     }
   };
-
-  const handleSaveJob = async () => {
-    const horas = parseFloat(jobData.horas);
-    const precioMateriales = parseFloat(jobData.precioMateriales);
-
-    if (!isNaN(horas) && !isNaN(precioMateriales)) {
-      const calculatedPrecioTotal = horas * precioMateriales;
-
-      axios.post('http://localhost:5000/api/jobs', {
-        ...jobData,
-        precioTotal: calculatedPrecioTotal.toString(), 
-      })
-        .then((response) => {
-          console.log('Respuesta del servidor:', response.data);
-          fetchJobs(); 
-          handleModalClose();
-        })
-        .catch((error) => {
-          console.error('Error al enviar datos al servidor:', error);
-        });
-
-      setJobData({
-        titulo: '',
-        descripcion: '',
-        tipo: 'reparacion-mecanica',
-        estatus: 'en-proceso',
-        horas: '',
-        precioMateriales: '',
-        precioTotal: '',
-      });
-    } else {
-      console.error('Las cantidades de horas y precio de materiales deben ser números válidos');
-    }
-  };
-
-  const fetchJobs = () => {
-    axios.get('http://localhost:5000/api/jobs')
-      .then((response) => {
-        setJobsList(response.data);
-      })
-      .catch((error) => {
-        console.error('Error al obtener trabajos desde el servidor:', error);
-      });
-  };
-
-  useEffect(() => {
-    fetchJobs(); 
-  }, []);
 
   return (
-    <div className="container mx-auto p-4">
-         <h2 className="text-2xl text-left font-bold mt-4 p-9">LISTA DE TRABAJOS</h2>
-      <button onClick={handleModalOpen} className="mb-9 bg-blue-500 text-white px-4 py-2 rounded text-right p-9 self-end">
-        Agregar Trabajo
-      </button>
-      <ul>
-        {jobsList.map((job) => (
-          <li className='mb-4 border border-b-2 border-solid border-gray-300 p-6 rounded-lg relative' key={job.id_trabajo}>
-            <div>
-              <h2 className='text-lg font-bold text-left'>{job.titulo}</h2>
-              <p>
-                <span className='text-sm'>Tipo: {job.tipo}</span> - Horas: {job.horas}
-              </p>
-            </div>
-            <div className='absolute right-0 top-0 mt-6 mr-6'>
-              <button onClick={() => toggleDetails(job.id_trabajo)}>
-                {showDetails[job.id_trabajo] ? (
-                  <img
-                    src="https://static.thenounproject.com/png/22249-200.png"
-                    alt="Eye Icon"
-                    width="40"
-                    height="20"
-                  />
-                ) : (
-                  <img
-                    src="https://cdn.icon-icons.com/icons2/2551/PNG/512/eye_icon_152844.png"
-                    alt="Eye Icon"
-                    width="40"
-                    height="20"
-                  />
-                )}
-              </button>
-            </div>
-            {showDetails[job.id_trabajo] && (
-              <div>
-                <p>Descripción: {job.descripcion}</p>
-                <p>Tipo: {job.tipo}</p>
-                <p>Estatus: {job.estatus}</p>
-                <p>Horas: {job.horas}</p>
-                <p>Precio Materiales: {job.precioMateriales}</p>
-                <p>Precio Total: {job.precioTotal}</p>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {modalOpen && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center size-">
-          <div className="absolute w-full h-full bg-gray-800 opacity-50" onClick={handleModalClose}></div>
-          <div className="bg-white  p-8 rounded shadow-lg z-10">
-            <h2 className="text-2xl font-bold mb-4">Ingresa los detalles del trabajo</h2>
-            <div className="mb-4">
-              <label htmlFor="titulo" className="block text-gray-600">
-                Título:
-              </label>
-              <input
-                type="text"
-                id="titulo"
-                name="titulo"
-                value={jobData.titulo}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="descripcion" className="block text-gray-600">
-                Descripción:
-              </label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                value={jobData.descripcion}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="tipo" className="block text-gray-600">
-                Tipo:
-              </label>
-              <select
-                id="tipo"
-                name="tipo"
-                value={jobData.tipo}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              >
-                <option value="reparacion-mecanica">Reparación Mecánica</option>
-                <option value="reparacion-chapa-pintura">Reparación de Chapa y Pintura</option>
-                <option value="revision">Revisión</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="estatus" className="block text-gray-600">
-                Estatus:
-              </label>
-              <select
-                id="estatus"
-                name="estatus"
-                value={jobData.estatus}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              >
-                <option value="en-proceso">En Proceso</option>
-                <option value="terminado">Terminado</option>
-              </select>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="horas" className="block text-gray-600">
-                Horas:
-              </label>
-              <input
-                type="number"
-                id="horas"
-                name="horas"
-                value={jobData.horas}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="precioMateriales" className="block text-gray-600">
-                Precio de Materiales:
-              </label>
-              <input
-                type="number"
-                id="precioMateriales"
-                name="precioMateriales"
-                value={jobData.precioMateriales}
-                onChange={handleInputChange}
-                className="w-full border p-2"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="precioTotal" className="block text-gray-600">
-                Precio Total:
-              </label>
-              <input
-                type="number"
-                id="precioTotal"
-                name="precioTotal"
-                value={jobData.precioTotal}
-                readOnly
-                className="w-full border p-2"
-              />
-            </div>
-            <div className="flex justify-end">
-              <button onClick={handleSaveJob} className="bg-blue-500 text-white px-4 py-2 rounded">
-                Guardar
-              </button>
-              <button onClick={handleModalClose} className="ml-2 bg-gray-500 text-white px-4 py-2 rounded">
-                Cancelar
-              </button>
-            </div>
+    <div>
+    <div
+      className={`fixed top-0 left-0 w-full h-full flex items-center justify-center ${
+        showModal ? '' : 'hidden'
+      }`}
+    >
+      <div className="absolute w-full h-full bg-gray-900 opacity-50" onClick={closeModal}></div>
+     
+      <div className="z-50 bg-white p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4">Formulario</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="titulo">Título:</label>
+            <input
+              type="text"
+              id="titulo"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
           </div>
+          <div className="mb-4">
+            <label htmlFor="descripcion">Descripción:</label>
+            <textarea
+              id="descripcion"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="horas">Horas:</label>
+            <input
+              type="number"
+              id="horas"
+              value={horas}
+              onChange={(e) => setHoras(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="estatus">Estatus:</label>
+            <select
+              id="estatus"
+              value={estatus}
+              onChange={(e) => setEstatus(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="En proceso">En proceso</option>
+              <option value="Terminado">Terminado</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="precioMateriales">Precio de Material:</label>
+            <input
+              type="number"
+              id="precioMateriales"
+              value={precioMateriales}
+              onChange={(e) => setPrecioMateriales(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="tipoTrabajo">Tipo de Trabajo:</label>
+            <select
+              id="tipoTrabajo"
+              value={tipoTrabajo}
+              onChange={handleTipoTrabajoChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="ReparacionMecanica">Reparación Mecánica</option>
+              <option value="ReparacionChapaPintura">Reparación Chapa y Pintura</option>
+              <option value="Revision">Revisión</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Calcular Precio Total
+          </button>
+        </form>
+        <div className="mt-4">
+          <p>Precio Total: ${precioTotal.toFixed(2)}</p>
         </div>
-      )}
+        
+      </div>
+      </div>
+       {/* Lista de trabajos */}
+        <div className="mt-8">
+          <h3 className="text-xl font-bold mb-4">Lista de Trabajos</h3>
+          <ul>
+          {trabajos &&
+  trabajos.map((trabajo) => (
+    <li key={trabajo.id_trabajo}>
+      {trabajo.titulo && <span>{trabajo.titulo} - </span>}
+      {trabajo.descripcion && <span>{trabajo.descripcion} - </span>}
+      {trabajo.precioTotal !== undefined && <span>{trabajo.precioTotal}</span>}
+    </li>
+  ))}
 
 
-
+          </ul>
+        </div>
     </div>
+    
   );
 };
 
-export default CrudComponent;
+export default Modal;

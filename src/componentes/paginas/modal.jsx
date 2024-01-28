@@ -108,12 +108,53 @@ const CrudComponent = () => {
       <button onClick={handleModalOpen} className="mb-9 bg-blue-500 text-white px-4 py-2 rounded text-right p-9 self-end">
         Agregar Trabajo
       </button>
+      <ul>
+        {jobsList.map((job) => (
+          <li className='mb-4 border border-b-2 border-solid border-gray-300 p-6 rounded-lg relative' key={job.id_trabajo}>
+            <div>
+              <h2 className='text-lg font-bold text-left'>{job.titulo}</h2>
+              <p>
+                <span className='text-sm'>Tipo: {job.tipo}</span> - Horas: {job.horas}
+              </p>
+            </div>
+            <div className='absolute right-0 top-0 mt-6 mr-6'>
+              <button onClick={() => toggleDetails(job.id_trabajo)}>
+                {showDetails[job.id_trabajo] ? (
+                  <img
+                    src="https://static.thenounproject.com/png/22249-200.png"
+                    alt="Eye Icon"
+                    width="40"
+                    height="20"
+                  />
+                ) : (
+                  <img
+                    src="https://cdn.icon-icons.com/icons2/2551/PNG/512/eye_icon_152844.png"
+                    alt="Eye Icon"
+                    width="40"
+                    height="20"
+                  />
+                )}
+              </button>
+            </div>
+            {showDetails[job.id_trabajo] && (
+              <div>
+                <p>Descripción: {job.descripcion}</p>
+                <p>Tipo: {job.tipo}</p>
+                <p>Estatus: {job.estatus}</p>
+                <p>Horas: {job.horas}</p>
+                <p>Precio Materiales: {job.precioMateriales}</p>
+                <p>Precio Total: {job.precioTotal}</p>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
 
       {modalOpen && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center size-">
           <div className="absolute w-full h-full bg-gray-800 opacity-50" onClick={handleModalClose}></div>
-          <div className="bg-white p-8 rounded shadow-lg z-10">
-            <h2 className="text-2xl font-bold mb-4">Agregar Trabajo</h2>
+          <div className="bg-white  p-8 rounded shadow-lg z-10">
+            <h2 className="text-2xl font-bold mb-4">Ingresa los detalles del trabajo</h2>
             <div className="mb-4">
               <label htmlFor="titulo" className="block text-gray-600">
                 Título:
@@ -222,47 +263,7 @@ const CrudComponent = () => {
       )}
 
 
-<ul>
-        {jobsList.map((job) => (
-          <li className='mb-4 border border-b-2 border-solid border-gray-300 p-6 rounded-lg relative' key={job.id_trabajo}>
-            <div>
-              <h2 className='text-lg font-bold text-left'>{job.titulo}</h2>
-              <p>
-                <span className='text-sm'>Tipo: {job.tipo}</span> - Horas: {job.horas}
-              </p>
-            </div>
-            <div className='absolute right-0 top-0 mt-6 mr-6'>
-              <button onClick={() => toggleDetails(job.id_trabajo)}>
-                {showDetails[job.id_trabajo] ? (
-                  <img
-                    src="https://static.thenounproject.com/png/22249-200.png"
-                    alt="Eye Icon"
-                    width="40"
-                    height="20"
-                  />
-                ) : (
-                  <img
-                    src="https://cdn.icon-icons.com/icons2/2551/PNG/512/eye_icon_152844.png"
-                    alt="Eye Icon"
-                    width="40"
-                    height="20"
-                  />
-                )}
-              </button>
-            </div>
-            {showDetails[job.id_trabajo] && (
-              <div>
-                <p>Descripción: {job.descripcion}</p>
-                <p>Tipo: {job.tipo}</p>
-                <p>Estatus: {job.estatus}</p>
-                <p>Horas: {job.horas}</p>
-                <p>Precio Materiales: {job.precioMateriales}</p>
-                <p>Precio Total: {job.precioTotal}</p>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+
     </div>
   );
 };

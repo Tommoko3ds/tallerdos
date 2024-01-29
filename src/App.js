@@ -20,7 +20,7 @@ function App() {
             element={
               <div className="p-4">
                 <Header />
-                <button onClick={openModal}>Abrir Modal</button>
+                <button onClick={openModal} className='text-right p-4 float-right bg-blue-600 rounded-lg m-4'>Agregar Trabajo</button>
                 <Modal showModal={showModal} closeModal={closeModal} />
               </div>
             }

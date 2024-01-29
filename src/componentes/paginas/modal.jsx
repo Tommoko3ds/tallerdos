@@ -178,7 +178,7 @@ const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
       </div>
        {/* Lista de trabajos */}
         <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4">Lista de Trabajos</h3>
+          <h3 className="text-xl font-bold mb-4">LISTA DE TRABAJOS</h3>
           <ul>
           {trabajos &&
   trabajos.map((trabajo) => (

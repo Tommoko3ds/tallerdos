@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
+const Modal = ({ showModal, closeModal }) => {
+  const [trabajos, setTrabajos] = useState([]);
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [horas, setHoras] = useState('');
@@ -9,8 +10,36 @@ const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
   const [precioMateriales, setPrecioMateriales] = useState('');
   const [tipoTrabajo, setTipoTrabajo] = useState('ReparacionMecanica');
   const [precioTotal, setPrecioTotal] = useState(0);
+  const [formDataDisplay, setFormDataDisplay] = useState(null);
 
+  const TrabajoItem = ({ trabajo, index }) => {
+    if (!trabajo) {
+      return null;
+    }
 
+    return (
+      <div key={index} className="mb-4 border p-4 rounded">
+        <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
+        <p>{trabajo.descripcion}</p>
+        <p>Horas: {trabajo.horas}</p>
+        <p>Estatus: {trabajo.estatus}</p>
+        <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    const fetchTrabajos = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/jobs');
+        setTrabajos(response.data);
+      } catch (error) {
+        console.error('Error al obtener trabajos desde la base de datos:', error);
+      }
+    };
+
+    fetchTrabajos();
+  }, []);
 
   const handleTipoTrabajoChange = (event) => {
     setTipoTrabajo(event.target.value);
@@ -36,37 +65,48 @@ const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
         break;
     }
 
-    setPrecioTotal(precioTipoTrabajo);
+    return precioTipoTrabajo;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    calcularPrecioTotal();
 
-    // Verificar que el campo precioMateriales tiene un valor antes de enviar la solicitud
     if (precioMateriales === '') {
       console.error('El campo precioMateriales no puede estar vacío');
-      return;  // Salir de la función si precioMateriales está vacío
+      return;
     }
 
+    const formData = {
+      titulo,
+      descripcion,
+      tipo: tipoTrabajo,
+      estatus,
+      horas,
+      precioMateriales,
+    };
+
+    const precioCalculado = calcularPrecioTotal();
+    setPrecioTotal(precioCalculado);
+
+    formData.precioTotal = precioCalculado;
+
+    console.log('Form Data:', formData);
+
     try {
-      const response = await axios.post('http://localhost:5000/api/jobs', {
-        titulo,
-        descripcion,
-        tipo: tipoTrabajo,
-        estatus,
-        horas,
-        precioMateriales,
-        precioTotal,
-      });
+      const response = await axios.post('http://localhost:5000/api/jobs', formData);
 
       console.log(response.data.message);
 
       if (response.status === 200) {
-        // Actualizar la lista de trabajos
         setTrabajos([...trabajos, response.data.trabajo]);
 
-        // Limpiar los campos
+        await new Promise((resolve) => {
+          calcularPrecioTotal();
+          resolve();
+        });
+
+        setFormDataDisplay(formData);
+
         setTitulo('');
         setDescripcion('');
         setHoras('');
@@ -75,19 +115,17 @@ const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
         setTipoTrabajo('ReparacionMecanica');
         setPrecioTotal(0);
 
-        // Puedes realizar acciones adicionales después de guardar, como cerrar el modal
         closeModal();
       } else {
         console.error('Error al guardar trabajo:', response.data.error);
-        // Puedes manejar el error de alguna manera
       }
     } catch (error) {
       console.error('Error de red al enviar datos:', error);
-      // Puedes manejar el error de red de alguna manera
     }
   };
 
   return (
+    <div>
     <div>
     <div
       className={`fixed top-0 left-0 w-full h-full flex items-center justify-center ${
@@ -176,24 +214,20 @@ const Modal = ({ showModal, closeModal, trabajos, setTrabajos }) => {
         
       </div>
       </div>
-       {/* Lista de trabajos */}
-        <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4">LISTA DE TRABAJOS</h3>
-          <ul>
-          {trabajos &&
-  trabajos.map((trabajo) => (
-    <li key={trabajo.id_trabajo}>
-      {trabajo.titulo && <span>{trabajo.titulo} - </span>}
-      {trabajo.descripcion && <span>{trabajo.descripcion} - </span>}
-      {trabajo.precioTotal !== undefined && <span>{trabajo.precioTotal}</span>}
-    </li>
-  ))}
 
-
-          </ul>
-        </div>
     </div>
-    
+      <div className="mt-8">
+        <h3 className="text-xl font-bold mb-4">LISTA DE TRABAJOS</h3>
+        {Array.isArray(trabajos) && trabajos.length > 0 ? (
+          trabajos.map((trabajo, index) => (
+            <TrabajoItem key={index} trabajo={trabajo} index={index} />
+          ))
+        ) : (
+          <p>No hay trabajos disponibles</p>
+        )}
+      </div>
+      {/* ... (código previo) */}
+    </div>
   );
 };
 

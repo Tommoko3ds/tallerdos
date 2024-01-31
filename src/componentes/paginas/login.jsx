@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './login.css';
 
 const Login = () => {
@@ -9,6 +10,24 @@ const Login = () => {
     e.preventDefault();
     console.log(`Email: ${email}, Password: ${password}`);
   };
+  const Login = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/login/", {
+        correo: email,
+        contrasena: password,
+      });
+
+      if (response.data.status) {
+        const idUsuario = response.data.respuesta;
+        console.log(idUsuario); 
+        window.location.href = (`/Home/${idUsuario}`);
+      } else {
+        alert('Prueba con otro correo o contraseña');
+      }
+    } catch (error) {
+      console.error("Error al autenticar el usuario:", error);
+    }
+  };
 
   return (
   <div className="App">
@@ -18,14 +37,24 @@ const Login = () => {
     <p>Identificate con tu usuario y contraseña para acceder</p>
     <form>
       <div className="user-box">
-        <input type="text" name="" required />
+        <input 
+        type="email" 
+        placeholder="" 
+        onChange={(e) =>{
+          setEmail(e.target.value);
+        }}
+        required />
         <label>Username</label>
       </div>
       <div className="user-box">
-        <input type="password" name="" required />
+        <input type="password"
+        placeholder=''
+        onChange={(e)=>{
+          setPassword(e.target.value);
+        }} required />
         <label>Password</label>
       </div>
-      <a href="#">
+      <a onClick={Login}>
         <span></span>
         <span></span>
         <span></span>

@@ -4,6 +4,7 @@ import Login from './componentes/paginas/login';
 import Modal from './componentes/paginas/modal';
 import Header from './componentes/header';
 
+
 function App() {
   const [showModal, setShowModal] = useState(false);
 
@@ -14,9 +15,10 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          
           <Route
-            path="/contenido"
+            path="/Home/:id"
             element={
               <div className="p-4">
                 <Header />

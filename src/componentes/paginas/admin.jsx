@@ -37,6 +37,11 @@ const UsersManagement = () => {
 
   const handleAddUser = async () => {
     try {
+      if (!username || !password || !email) {
+        alert('Por favor, complete todos los campos.');
+        return;
+      }
+
       const response = await axios.post('http://localhost:5000/users/usuarios', {
         usuario: username,
         contrasena: password,
@@ -44,11 +49,11 @@ const UsersManagement = () => {
       });
 
       if (response.status === 200) {
-      
         fetchUsers();
         setUsername('');
         setPassword('');
         setEmail('');
+        closeModal(); // Cerrar modal después de agregar un usuario
       } else {
         console.error('Error al agregar usuario:', response.data.error);
       }
@@ -71,6 +76,11 @@ const UsersManagement = () => {
 
   const handleUpdateUser = async () => {
     try {
+      if (!username || !password || !email) {
+        alert('Por favor, complete todos los campos.');
+        return;
+      }
+
       const response = await axios.put(`http://localhost:5000/users/usuarios/${selectedUserId}`, {
         usuario: username,
         contrasena: password,
@@ -83,6 +93,7 @@ const UsersManagement = () => {
         setPassword('');
         setEmail('');
         setSelectedUserId(null);
+        closeModal(); // Cerrar modal después de actualizar un usuario
       } else {
         console.error('Error al actualizar usuario:', response.data.error);
       }

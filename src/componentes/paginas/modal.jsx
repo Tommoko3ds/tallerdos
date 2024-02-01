@@ -1,7 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 const Modal = ({ showModal, closeModal }) => {
+  const handleDelete = async (id_trabajo) => {
+    console.log('Eliminando trabajo con ID:', id_trabajo);
+  
+    try {
+      await axios.delete(`http://localhost:5000/api/jobs/${id_trabajo}`);
+      console.log(`Trabajo con ID ${id_trabajo} eliminado correctamente`);
+  
+      // Actualiza la lista después de eliminar
+      const response = await axios.get('http://localhost:5000/api/jobs');
+      setTrabajos(response.data);
+  
+      // Otras acciones que puedas necesitar después de eliminar el trabajo
+  
+    } catch (error) {
+      console.error(`Error al eliminar trabajo con ID ${id_trabajo}:`, error);
+    }
+  };
+  
+
+  const handleEdit = (trabajo) => {
+    // Implement your edit logic here
+    console.log('Editing job:', trabajo);
+  };
   const [trabajos, setTrabajos] = useState([]);
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -13,10 +37,19 @@ const Modal = ({ showModal, closeModal }) => {
   const [formDataDisplay, setFormDataDisplay] = useState(null);
   const [busqueda, setBusqueda] = useState('');
 
-  const TrabajoItem = ({ trabajo, index }) => {
+ 
+  
+  const TrabajoItem = ({ trabajo, index, onEdit, onDelete }) => {
     if (!trabajo) {
       return null;
     }
+    const handleDelete = () => {
+      onDelete(trabajo.id_trabajo);
+    };
+   
+    const handleEdit = () => {
+      onEdit(trabajo);
+    };
 
     return (
       <div key={index} className="mb-4 border p-4 rounded">
@@ -25,7 +58,17 @@ const Modal = ({ showModal, closeModal }) => {
         <p>Horas: {trabajo.horas}</p>
         <p>Estatus: {trabajo.estatus}</p>
         <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
+
+
+         <button onClick={handleEdit} className="mr-2 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700">
+        Editar
+      </button>
+      <button onClick={handleDelete} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700">
+        Eliminar
+      </button>
       </div>
+
+      
     );
   };
 
@@ -38,9 +81,12 @@ const Modal = ({ showModal, closeModal }) => {
         console.error('Error al obtener trabajos desde la base de datos:', error);
       }
     };
+    
 
     fetchTrabajos();
   }, []);
+
+  
 
   const handleTipoTrabajoChange = (event) => {
     setTipoTrabajo(event.target.value);
@@ -76,6 +122,7 @@ const Modal = ({ showModal, closeModal }) => {
       console.error('El campo precioMateriales no puede estar vacío');
       return;
     }
+    
 
     const formData = {
       titulo,
@@ -95,19 +142,15 @@ const Modal = ({ showModal, closeModal }) => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/jobs', formData);
-
+      
       console.log(response.data.message);
-
+    
       if (response.status === 200) {
         setTrabajos([...trabajos, response.data.trabajo]);
-
-        await new Promise((resolve) => {
-          calcularPrecioTotal();
-          resolve();
-        });
-
+    
+       
         setFormDataDisplay(formData);
-
+  
         setTitulo('');
         setDescripcion('');
         setHoras('');
@@ -115,14 +158,20 @@ const Modal = ({ showModal, closeModal }) => {
         setPrecioMateriales('');
         setTipoTrabajo('ReparacionMecanica');
         setPrecioTotal(0);
-
+    
+        // Cierra el modal
         closeModal();
       } else {
+        // Si la respuesta no es 200, imprime un mensaje de error
         console.error('Error al guardar trabajo:', response.data.error);
       }
     } catch (error) {
+      // Captura errores de red al enviar datos
       console.error('Error de red al enviar datos:', error);
     }
+    
+    
+    
   };
 
   return (
@@ -228,8 +277,9 @@ const Modal = ({ showModal, closeModal }) => {
             {trabajos
   .filter((trabajo) => trabajo && trabajo.estatus === 'En proceso' && trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase()))
   .map((trabajo, index) => (
-    <TrabajoItem key={index} trabajo={trabajo} index={index} />
+    <TrabajoItem key={index} trabajo={trabajo} index={index} onDelete={handleDelete} onEdit={handleEdit} />
   ))}
+
 
           </div>
         </div>
@@ -239,8 +289,9 @@ const Modal = ({ showModal, closeModal }) => {
             {trabajos
   .filter((trabajo) => trabajo && trabajo.estatus === 'Terminado' && trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase()))
   .map((trabajo, index) => (
-    <TrabajoItem key={index} trabajo={trabajo} index={index} />
+    <TrabajoItem key={index} trabajo={trabajo} index={index} onDelete={handleDelete} onEdit={handleEdit} />
   ))}
+
           </div>
         </div>
       </div>

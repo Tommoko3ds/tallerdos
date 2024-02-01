@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
 const Modal = ({ showModal, closeModal }) => {
   const handleDelete = async (id_trabajo) => {
     console.log('Eliminando trabajo con ID:', id_trabajo);
@@ -21,6 +20,40 @@ const Modal = ({ showModal, closeModal }) => {
     }
   };
   
+  useEffect(() => {
+    const fetchTrabajos = async () => {
+      try {
+        // Obtener información de geolocalización del usuario
+        const locationInfo = await obtenerInformacionGeografica();
+        
+        // Verificar la ubicación y cargar los trabajos según sea necesario
+        if (locationInfo && locationInfo.country === 'MX') {
+          const response = await axios.get('http://localhost:5000/api/jobs');
+          setTrabajos(response.data);
+        } else {
+          console.log('Usuario fuera de México. No se mostrarán trabajos.');
+          setTrabajos([]);
+        }
+      } catch (error) {
+        console.error('Error al obtener trabajos desde la base de datos:', error);
+      }
+    };
+
+    fetchTrabajos();
+  }, []);
+
+  // ... (otras funciones y lógica)
+
+  // Función para obtener información de geolocalización usando ipinfo.io
+  const obtenerInformacionGeografica = async () => {
+    try {
+      const response = await axios.get('https://ipinfo.io/json');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener información de geolocalización:', error);
+      return null;
+    }
+  };
 
   const handleEdit = (trabajo) => {
     // Implement your edit logic here

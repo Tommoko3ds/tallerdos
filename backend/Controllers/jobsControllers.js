@@ -12,7 +12,7 @@ function verJobs(request, response) {
   }
 
   function crearTrabajo(request, response) {
-    const { titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal } = req.body;  
+    const { titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal } = request.body;  
   
     connection.query( 'INSERT INTO trabajos (titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal) VALUES (?, ?, ?, ?, ?, ?, ?)',
     [titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal],
@@ -22,7 +22,7 @@ function verJobs(request, response) {
           response.status(500).json({ error: "Error interno del servidor" });
         } else {
           console.log('Trabajo insertado correctamente en la base de datos');
-          res.json({ success: true });
+          response.json({ success: true });
         }
       }
     );

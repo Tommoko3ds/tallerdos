@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './componentes/paginas/login';
 import Modal from './componentes/paginas/modal';
 import Header from './componentes/header';
-
+import UsersManagement from './componentes/paginas/admin';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +27,15 @@ function App() {
               </div>
             }
           />
+
+          {/* Nueva ruta para la gestión de usuarios */}
+          <Route path="/users/:id" element={
+           <div className="p-4">
+            <Header />
+          <UsersManagement />
+          </div>
+          } />
+
         </Routes>
       </div>
     </Router>

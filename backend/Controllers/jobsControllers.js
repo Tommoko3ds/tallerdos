@@ -14,7 +14,8 @@ function verJobs(request, response) {
 function crearTrabajo(request, response) {
   const { titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal } = request.body;
 
-  connection.query('INSERT INTO trabajos (titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  connection.query(
+    'INSERT INTO trabajos (titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal) VALUES (?, ?, ?, ?, ?, ?, ?)',
     [titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal],
     (error, results) => {
       if (error) {
@@ -32,7 +33,8 @@ function editarTrabajo(request, response) {
   const { id_trabajo } = request.params;
   const { titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal } = request.body;
 
-  connection.query('UPDATE trabajos SET titulo=?, descripcion=?, tipo=?, estatus=?, horas=?, precioMateriales=?, precioTotal=? WHERE id_trabajo=?',
+  connection.query(
+    'UPDATE trabajos SET titulo=?, descripcion=?, tipo=?, estatus=?, horas=?, precioMateriales=?, precioTotal=? WHERE id_trabajo=?',
     [titulo, descripcion, tipo, estatus, horas, precioMateriales, precioTotal, id_trabajo],
     (error, results) => {
       if (error) {

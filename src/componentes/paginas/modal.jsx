@@ -11,6 +11,7 @@ const Modal = ({ showModal, closeModal }) => {
   const [tipoTrabajo, setTipoTrabajo] = useState('ReparacionMecanica');
   const [precioTotal, setPrecioTotal] = useState(0);
   const [formDataDisplay, setFormDataDisplay] = useState(null);
+  const [busqueda, setBusqueda] = useState('');
 
   const TrabajoItem = ({ trabajo, index }) => {
     if (!trabajo) {
@@ -218,15 +219,31 @@ const Modal = ({ showModal, closeModal }) => {
     </div>
       <div className="mt-8">
         <h3 className="text-xl font-bold mb-4">LISTA DE TRABAJOS</h3>
-        {Array.isArray(trabajos) && trabajos.length > 0 ? (
-          trabajos.map((trabajo, index) => (
-            <TrabajoItem key={index} trabajo={trabajo} index={index} />
-          ))
-        ) : (
-          <p>No hay trabajos disponibles</p>
-        )}
+       
       </div>
-      {/* ... (código previo) */}
+      <div className="flex">
+        <div className="w-1/2 pr-4">
+          <div className="mt-8">
+            <h3 className="text-xl font-bold mb-6 inline-block bg-orange-300 rounded-lg p-4">EN PROCESO</h3>
+            {trabajos
+  .filter((trabajo) => trabajo && trabajo.estatus === 'En proceso' && trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase()))
+  .map((trabajo, index) => (
+    <TrabajoItem key={index} trabajo={trabajo} index={index} />
+  ))}
+
+          </div>
+        </div>
+        <div className="w-1/2 pl-4">
+          <div className="mt-8">
+            <h3 className="text-xl font-bold mb-6 inline-block bg-green-300 rounded-lg p-4">TERMINADOS</h3>
+            {trabajos
+  .filter((trabajo) => trabajo && trabajo.estatus === 'Terminado' && trabajo.titulo.toLowerCase().includes(busqueda.toLowerCase()))
+  .map((trabajo, index) => (
+    <TrabajoItem key={index} trabajo={trabajo} index={index} />
+  ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

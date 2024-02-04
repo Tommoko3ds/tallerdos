@@ -2,7 +2,16 @@ const { json } = require("express");
 const connection = require("../database");
 
 function verJobs(request, response) {
-  connection.query(`SELECT * FROM trabajos`, (error, results) => {
+  const { titulo } = request.query;
+
+  // Usar una consulta SQL condicional para incluir la búsqueda por título
+  let query = 'SELECT * FROM trabajos';
+
+  if (titulo) {
+    query += ` WHERE titulo LIKE '%${titulo}%'`;
+  }
+
+  connection.query(query, (error, results) => {
     if (error) {
       response.status(500).json({ error: "Error al obtener trabajos" });
     } else {
@@ -62,9 +71,31 @@ function eliminarTrabajo(request, response) {
   });
 }
 
+const obtenerTrabajoPorId = async (req, res) => {
+  try {
+    const { id_trabajo } = req.params;
+
+    // Lógica para obtener el trabajo por ID desde la base de datos
+    // Por ejemplo, asumiendo que trabajos es una matriz de trabajos
+    const trabajo = trabajos.find((t) => t.id_trabajo === parseInt(id_trabajo));
+
+    if (!trabajo) {
+      return res.status(404).json({ error: 'Trabajo no encontrado' });
+    }
+
+    res.json(trabajo);
+  } catch (error) {
+    console.error('Error al obtener trabajo por ID:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { obtenerTrabajoPorId };
+
 module.exports = {
   verJobs,
   crearTrabajo,
   editarTrabajo,
   eliminarTrabajo,
+  obtenerTrabajoPorId,
 };

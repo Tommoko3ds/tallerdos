@@ -24,7 +24,7 @@ const UsersManagement = () => {
 
   const openModal = () => {
     setIsModalOpen(true);
-    // Si estás abriendo el modal para editar, puedes realizar alguna lógica adicional aquí
+
   };
 
   const closeModal = () => {
@@ -53,7 +53,7 @@ const UsersManagement = () => {
         setUsername('');
         setPassword('');
         setEmail('');
-        closeModal(); // Cerrar modal después de agregar un usuario
+        closeModal();
       } else {
         console.error('Error al agregar usuario:', response.data.error);
       }
@@ -71,7 +71,7 @@ const UsersManagement = () => {
     setPassword(selectedUser.contrasena);
     setEmail(selectedUser.correo);
 
-    openModal();  // Abre el modal al editar
+    openModal(); 
   };
 
   const handleUpdateUser = async () => {
@@ -93,7 +93,7 @@ const UsersManagement = () => {
         setPassword('');
         setEmail('');
         setSelectedUserId(null);
-        closeModal(); // Cerrar modal después de actualizar un usuario
+        closeModal();
       } else {
         console.error('Error al actualizar usuario:', response.data.error);
       }
@@ -141,7 +141,7 @@ const UsersManagement = () => {
         Agregar Usuario
       </button>
 
-      {/* Modal */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 overflow-y-auto flex items-center justify-center">
           <div className="relative p-8 bg-white w-96 rounded shadow-lg">

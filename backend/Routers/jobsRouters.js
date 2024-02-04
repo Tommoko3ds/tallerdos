@@ -4,7 +4,8 @@ const router = express.Router();
 
 router.get("/jobs", jobsControllers.verJobs);
 router.post("/jobs", jobsControllers.crearTrabajo);
-router.put("/jobs/:id_trabajo", jobsControllers.editarTrabajo); // Agregamos :id_trabajo para indicar que es un parámetro
-router.delete("/jobs/:id_trabajo", jobsControllers.eliminarTrabajo); // Agregamos :id_trabajo para indicar que es un parámetro
+router.get("/jobs/:id_trabajo", jobsControllers.obtenerTrabajoPorId);
+router.put("/jobs/:id_trabajo", jobsControllers.editarTrabajo);
+router.delete("/jobs/:id_trabajo", jobsControllers.eliminarTrabajo);
 
 module.exports = router;

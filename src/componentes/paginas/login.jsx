@@ -40,6 +40,24 @@ const Login = () => {
     }
   };
 
+  const ConfirmLogin = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/confirm-login/", {
+        userId: userId,
+        codigoSeguridad: securityCode,
+      });
+
+      if (response.data.status) {
+        // Autenticación exitosa, redirigir a la página de inicio
+        window.location.href = '/Home/${userId}';
+      } else {
+        alert('Código de seguridad incorrecto. Intenta de nuevo.');
+      }
+    } catch (error) {
+      console.error("Error al confirmar el login:", error);
+    }
+  };
+
   return (
     <div className="App">
       <div className="login-box">

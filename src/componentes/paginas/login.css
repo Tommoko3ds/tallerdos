@@ -1,6 +1,6 @@
 .App {
-    background: linear-gradient( #AB85DD, #9DACE8,#9747FF);
-    height: 100vh; 
+    background: linear-gradient( #8e85dd, #9DACE8,#6f47ff);
+    height: 110vh; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,7 +66,7 @@ div.login {
     left: 0;
     padding: 10px 0;
     font-size: 16px;
-    color: #fff;
+    color: #54566e;
     pointer-events: none;
     transition: .5s;
   }
@@ -83,7 +83,7 @@ div.login {
     position: relative;
     display: inline-block;
     padding: 10px 20px;
-    color: #000000;
+    color: #3f115a;
     font-size: 16px;
     text-decoration: none;
     text-transform: uppercase;
@@ -94,7 +94,7 @@ div.login {
   }
   
   .login-box a:hover {
-    background: #000000;
+    background: #160e64;
     color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 5px #b08eff,

@@ -8,7 +8,7 @@ export default function Formulario() {
   const [horas, setHoras] = useState('');
   const [estatus, setEstatus] = useState('En proceso');
   const [precioMateriales, setPrecioMateriales] = useState('');
-  const [tipoTrabajo, setTipoTrabajo] = useState('ReparacionMecanica');
+  const [tipoTrabajo, setTipoTrabajo] = useState('Reparacion Mecanica');
   const [precioTotal, setPrecioTotal] = useState(0);
 
   const handleSubmit = async (event) => {
@@ -46,7 +46,7 @@ export default function Formulario() {
         setHoras('');
         setEstatus('En proceso');
         setPrecioMateriales('');
-        setTipoTrabajo('ReparacionMecanica');
+        setTipoTrabajo('Reparacion Mecanica');
         setPrecioTotal(0);
       } else {
         // If the response status is not 200, log an error message
@@ -69,10 +69,10 @@ export default function Formulario() {
     let precioTipoTrabajo = 0;
 
     switch (tipoTrabajo) {
-      case 'ReparacionMecanica':
+      case 'Reparacion Mecanica':
         precioTipoTrabajo = horasFloat * 350 + precioMaterialesFloat * 1.1;
         break;
-      case 'ReparacionChapaPintura':
+      case 'Reparacion Chapa y Pintura':
         precioTipoTrabajo = horasFloat * 350 + precioMaterialesFloat * 1.3;
         break;
       case 'Revision':
@@ -149,8 +149,8 @@ export default function Formulario() {
               onChange={handleTipoTrabajoChange}
               className="w-full p-2 border rounded"
             >
-              <option value="ReparacionMecanica">Reparación Mecánica</option>
-              <option value="ReparacionChapaPintura">Reparación Chapa y Pintura</option>
+              <option value="Reparacion Mecanica">Reparación Mecánica</option>
+              <option value="Reparacion Chapa y Pintura">Reparación Chapa y Pintura</option>
               <option value="Revision">Revisión</option>
             </select>
           </div>

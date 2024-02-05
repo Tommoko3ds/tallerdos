@@ -11,6 +11,8 @@ const Modal = ({ showModal, closeModal }) => {
   const [tipoTrabajo, setTipoTrabajo] = useState('ReparacionMecanica');
   const [precioTotal, setPrecioTotal] = useState(0);
   const [formDataDisplay, setFormDataDisplay] = useState(null);
+  const [modalAbierto, setModalAbierto] = useState('');
+  const [Formulario, setFormulario] = useState('');
 
   const TrabajoItem = ({ trabajo, index }) => {
     if (!trabajo) {
@@ -144,3 +146,5 @@ const Modal = ({ showModal, closeModal }) => {
     </div>
   );
 }
+
+export default Modal;

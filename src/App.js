@@ -38,19 +38,30 @@ function App() {
               path="/Home/:id"
               element={
                 <div className="p-0 ">
-                  <Header />
-                  <h1 className="font-bold  m-8 float-left font- text-2xl ">
-                    LISTA DE TRABAJOS
-                  </h1>
-                  <p className="float-left text-slate-500 text-justify">
-                    Haz click en el boton de “Nuevo” para agregar un trabajo a
-                    la lista<br></br>
-                    Haz click en un trabajo existente para ver los detalles o
-                    actualizar la información
-                  </p>
-                  <Modal showModal={showModal} closeModal={closeModal} />
-                  <ListaTrabajos />
+                <Header />
+                <div className="m-8">
+                  <div className="flex flex-col">
+                    <h1 className="font-bold m-8 float-left text-2xl">
+                      LISTA DE TRABAJOS
+                    </h1>
+                    <div className="flex flex-col m-8 mt-0 text-gray-500">
+                      <p>
+                        -Haz clic en el botón de "Agregar" para agregar un trabajo
+                        a la lista.
+                      </p>
+                      <p>
+                        -Haz clic en el icono del ojito para ver los detalles
+                        o actualizar la información. 
+                      </p>
+                      <p>
+                        -Haz clic en el icono de la basura para eliminar un trabajo.
+                      </p>
+                    </div>
+                    <Modal showModal={showModal} closeModal={closeModal} />
+                    <ListaTrabajos />
+                  </div>
                 </div>
+              </div>
               }
             />
 

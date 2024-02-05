@@ -9,7 +9,10 @@ const ListaTrabajos = () => {
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
   const [tituloEdit, setTituloEdit] = useState("");
   const [descripcionEdit, setDescripcionEdit] = useState("");
+  const [tipoEdit, setTipoEdit] = useState("");
   const [estatusEdit, setEstatusEdit] = useState("");
+  const [horasEdit, setHorasEdit] = useState("");
+  const [precioMaterialesEdit, setPrecioMaterialesEdit] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/api/jobs")
@@ -36,12 +39,15 @@ const ListaTrabajos = () => {
     setTrabajoSeleccionado(trabajoSeleccionado);
     setTituloEdit(trabajoSeleccionado.titulo);
     setDescripcionEdit(trabajoSeleccionado.descripcion);
+    setTipoEdit(trabajoSeleccionado.tipo);
     setEstatusEdit(trabajoSeleccionado.estatus);
+    setHorasEdit(trabajoSeleccionado.horas);
+    setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
     setEditarModal(true);
   };
   const handleUpdateTrabajo = async () => {
     try {
-      if (!tituloEdit || !descripcionEdit || !estatusEdit) {
+      if (!tituloEdit || !descripcionEdit || !estatusEdit || !tipoEdit || !horasEdit || !precioMaterialesEdit) {
         alert("Por favor, complete todos los campos.");
         return;
       }
@@ -52,6 +58,9 @@ const ListaTrabajos = () => {
           titulo: tituloEdit,
           descripcion: descripcionEdit,
           estatus: estatusEdit,
+          tipo: tipoEdit,
+          horas: horasEdit,
+          precioMateriales: precioMaterialesEdit
         }
       );
       if (response.status === 200) {
@@ -62,6 +71,8 @@ const ListaTrabajos = () => {
         setTituloEdit("");
         setDescripcionEdit("");
         setEstatusEdit("");
+        setTipoEdit("");
+        setHorasEdit("");
         setEditarModal(false);
       } else {
         console.error("Error al actualizar trabajo:", response.data.error);
@@ -124,6 +135,17 @@ const trabajosTerminados = Array.isArray(trabajos)
                       >
                         <option value="En proceso">En proceso</option>
                         <option value="Terminado">Terminado</option>
+                      </select>
+                      <label htmlFor="tipoEdit">Tipo:</label>
+                      <select
+                        id="tipoEdit"
+                        value={trabajoSeleccionado ? tipoEdit : ""} // Add a conditional check
+                        onChange={(e) => setTipoEdit(e.target.value)}
+                        className="w-full p-2 border rounded"
+                      >
+                        <option value="Reparacion Mecanica">Reparacion Mecanica</option>
+                        <option value="Reparación Chapa y Pintura">Reparación Chapa y Pintura</option>
+                        <option value="Revision">Revision</option>
                       </select>
 
                       <button

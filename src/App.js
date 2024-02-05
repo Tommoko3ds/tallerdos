@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./componentes/paginas/login";
-import Modal from "./componentes/paginas/modal";
-import Header from "./componentes/header";
-import {ProtectedRoute, ProtectedRouteLogin} from "./ProtectedRoute";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './componentes/paginas/login';
+import Modal from './componentes/paginas/modal';
+import Header from './componentes/header';
 
 
 function App() {
@@ -25,24 +24,12 @@ function App() {
             element={
               <div className="p-4">
                 <Header />
-                <h1 className="font-bold  m-8 float-left font- text-2xl ">
-                  LISTA DE TRABAJOS
-                </h1>
-                <p className="float-left text-slate-500 text-justify">
-                  Haz click en el boton de “Nuevo” para agregar un trabajo a la
-                  lista<br></br>
-                  Haz click en un trabajo existente para ver los detalles o
-                  actualizar la información
-                </p>
+                <button onClick={openModal} className='text-right p-4 float-right bg-blue-600 rounded-lg m-4'>Agregar Trabajo</button>
                 <Modal showModal={showModal} closeModal={closeModal} />
-                
               </div>
             }
           />
           </Route>
-
-          {/* Nueva ruta para la gestión de usuarios */}
-          
         </Routes>
       </div>
     </Router>

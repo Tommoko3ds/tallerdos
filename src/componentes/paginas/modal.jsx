@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Modal = ({ showModal, closeModal }) => {
@@ -126,109 +126,21 @@ const Modal = ({ showModal, closeModal }) => {
 
   return (
     <div>
-    <div>
-    <div
-      className={`fixed top-0 left-0 w-full h-full flex items-center justify-center ${
-        showModal ? '' : 'hidden'
-      }`}
-    >
-      <div className="absolute w-full h-full bg-gray-900 opacity-50" onClick={closeModal}></div>
-     
-      <div className="z-50 bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Formulario</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="titulo">Título:</label>
-            <input
-              type="text"
-              id="titulo"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
+      <button
+        className='bg-blue-700 text-white m-9 rounded-lg p-9 font-bold'
+        onClick={() => setModalAbierto(true)}
+      >
+        Agregar Trabajo
+      </button>
+      {modalAbierto && (
+        <div className='fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center'>
+          <div className='bg-white p-5 rounded flex flex-col justify-center items-center gap-5'>
+          <Formulario />
+            <button className='bg-blue-700 text-white m-2 rounded-lg p-2 font-bold' onClick={() => setModalAbierto(false)}>Listo</button>
           </div>
-          <div className="mb-4">
-            <label htmlFor="descripcion">Descripción:</label>
-            <textarea
-              id="descripcion"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="horas">Horas:</label>
-            <input
-              type="number"
-              id="horas"
-              value={horas}
-              onChange={(e) => setHoras(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="estatus">Estatus:</label>
-            <select
-              id="estatus"
-              value={estatus}
-              onChange={(e) => setEstatus(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
-              <option value="En proceso">En proceso</option>
-              <option value="Terminado">Terminado</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="precioMateriales">Precio de Material:</label>
-            <input
-              type="number"
-              id="precioMateriales"
-              value={precioMateriales}
-              onChange={(e) => setPrecioMateriales(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="tipoTrabajo">Tipo de Trabajo:</label>
-            <select
-              id="tipoTrabajo"
-              value={tipoTrabajo}
-              onChange={handleTipoTrabajoChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="ReparacionMecanica">Reparación Mecánica</option>
-              <option value="ReparacionChapaPintura">Reparación Chapa y Pintura</option>
-              <option value="Revision">Revisión</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Calcular Precio Total
-          </button>
-        </form>
-        <div className="mt-4">
-          <p>Precio Total: ${precioTotal.toFixed(2)}</p>
+         
         </div>
-        
-      </div>
-      </div>
-
-    </div>
-      <div className="mt-8">
-        <h3 className="text-xl font-bold mb-4">LISTA DE TRABAJOS</h3>
-        {Array.isArray(trabajos) && trabajos.length > 0 ? (
-          trabajos.map((trabajo, index) => (
-            <TrabajoItem key={index} trabajo={trabajo} index={index} />
-          ))
-        ) : (
-          <p>No hay trabajos disponibles</p>
-        )}
-      </div>
-      {/* ... (código previo) */}
+      )}
     </div>
   );
-};
-
-export default Modal;
+}

@@ -22,27 +22,28 @@ function App() {
           <Route
             path="/Home/:id"
             element={
-              <div className="p-0">
+              <div className="p-0 ">
                 <Header />
                 <div className="m-8">
-                  <div>
-                  <h1 className="font-bold m-8 float-left text-2xl ">
-                    LISTA DE TRABAJOS
-                  </h1>
-                  </div>
-                  <div>
-                    <p className=" text-slate-500 text-justify mt-4">
-                      Haz click en el boton de “Nuevo” para agregar un trabajo a
-                      la lista<br></br>
-                      Haz click en un trabajo existente para ver los detalles o
-                      actualizar la información
-                    </p>
+                  <div className="flex flex-col">
+                    <h1 className="font-bold m-8 float-left text-2xl">
+                      LISTA DE TRABAJOS
+                    </h1>
+                    <div className="flex flex-col m-8 mt-0 text-gray-500">
+                      <p>
+                        -Haz clic en el botón de “Nuevo” para agregar un trabajo
+                        a la lista
+                      </p>
+                      <p>
+                        -Haz clic en un trabajo existente para ver los detalles
+                        o actualizar la información
+                      </p>
+                    </div>
                     <Modal showModal={showModal} closeModal={closeModal} />
-                  <ListaTrabajos />
+                    <ListaTrabajos />
                   </div>
                 </div>
               </div>
-              
             }
           />
 

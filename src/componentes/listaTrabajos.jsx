@@ -71,12 +71,14 @@ const ListaTrabajos = () => {
     }
   };
 
-  const trabajosEnProceso = trabajos.filter(
-    (trabajo) => trabajo.estatus === "En proceso"
-  );
-  const trabajosTerminados = trabajos.filter(
-    (trabajo) => trabajo.estatus === "Terminado"
-  );
+  const trabajosEnProceso = Array.isArray(trabajos)
+  ? trabajos.filter((trabajo) => trabajo.estatus === "En proceso")
+  : [];
+
+const trabajosTerminados = Array.isArray(trabajos)
+  ? trabajos.filter((trabajo) => trabajo.estatus === "Terminado")
+  : [];
+
   return (
     <div>
       <div className="flex">

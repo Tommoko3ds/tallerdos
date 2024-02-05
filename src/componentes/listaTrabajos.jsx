@@ -86,12 +86,14 @@ const ListaTrabajos = () => {
           </h3>
           <ul>
             {trabajosEnProceso.map((trabajo) => (
-              <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded flex justify-between items-center"
+              <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded shadow-md flex justify-between items-center"
               >
                 <div>
                 <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
-                <p>Estatus: {trabajo.estatus}</p>
-                <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
+                <div className="flex flex-row">
+                <p className="mr-8">Tipo: {trabajo.tipo}</p>
+                <p>Horas: {trabajo.horas}</p>
+                </div> 
                 {editarModal && trabajoSeleccionado && (
                   <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
                     <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
@@ -146,7 +148,7 @@ const ListaTrabajos = () => {
                 />
                 <FontAwesomeIcon
                   icon={faTrashAlt}
-                  className="text-red-500 hover:text-red-700 cursor-pointer"
+                  className="text-gray-500 hover:text-gray-700 cursor-pointer"
                   onClick={() => handleDelete(trabajo.id_trabajo)}
                 />
                 </div>
@@ -160,12 +162,13 @@ const ListaTrabajos = () => {
           </h3>
           <ul>
             {trabajosTerminados.map((trabajo) => (
-              <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded flex justify-between items-center">
+              <li key={trabajo.id_trabajo} className="mb-4 border shadow-md p-4 rounded flex justify-between items-center">
                 <div>
                 <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
-                <p>Estatus: {trabajo.estatus}</p>
-                <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
-                
+                <div className="flex flex-row">
+                <p className="mr-8">Tipo: {trabajo.tipo}</p>
+                <p>Horas: {trabajo.horas}</p>
+                </div> 
                 {editarModal && trabajoSeleccionado && (
                   <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
                     <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
@@ -220,7 +223,7 @@ const ListaTrabajos = () => {
                 />
                 <FontAwesomeIcon
                   icon={faTrashAlt}
-                  className="text-red-500 hover:text-red-700 cursor-pointer"
+                  className="text-gray-500 hover:text-gray-700 cursor-pointer"
                   onClick={() => handleDelete(trabajo.id_trabajo)}
                 />
                 </div>

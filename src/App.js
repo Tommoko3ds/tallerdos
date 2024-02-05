@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './componentes/paginas/login';
 import Modal from './componentes/paginas/modal';
 import Header from './componentes/header';
-
+import { ProtectedRoute, ProtectedRouteLogin } from './ProtectedRoute';
 
 function App() {
   const [showModal, setShowModal] = useState(false);

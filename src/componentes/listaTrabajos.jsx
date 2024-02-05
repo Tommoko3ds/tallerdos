@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 const ListaTrabajos = () => {
   const [trabajos, setTrabajos] = useState([]);
@@ -69,18 +71,19 @@ const ListaTrabajos = () => {
       
       <div className="flex">
         <div className="w-1/2 pr-4">
-          <h3 className="text-lg font-bold mb-2 bg-orange-300 rounded-lg p-4 w-fit">En proceso</h3>
+          <h3 className="text-lg font-bold mb-2 bg-orange-300 rounded-lg p-2 w-fit">En proceso</h3>
           <ul>
             {trabajosEnProceso.map((trabajo) => (
               <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded">
 
             <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
-            <p>Descripción: {trabajo.descripcion}</p>
             <p>Estatus: {trabajo.estatus}</p>
             <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
-            <button onClick={() => handleEdit(trabajo.id_trabajo)} className="mr-2 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700">
-  Editar
-</button>
+            <FontAwesomeIcon
+  icon={faEye}
+  className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+  onClick={() => handleEdit(trabajo.id_trabajo)}
+/>
             {editarModal && trabajoSeleccionado && (
               <div className='fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center'>
                 <div className='bg-white p-5 rounded flex flex-col justify-center items-center gap-5'>
@@ -127,27 +130,30 @@ const ListaTrabajos = () => {
                 </div>
               </div>
             )}
-            <button onClick={() => handleDelete(trabajo.id_trabajo)} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700" >
-              Eliminar
-            </button>
+            <FontAwesomeIcon
+  icon={faTrashAlt}
+  className="text-red-500 hover:text-red-700 cursor-pointer"
+  onClick={() => handleDelete(trabajo.id_trabajo)}
+/>
           
               </li>
             ))}
           </ul>
         </div>
         <div className="w-1/2 pl-4">
-          <h3 className="text-lg font-bold mb-2 bg-green-300 rounded-lg p-4 w-fit">Terminados</h3>
+          <h3 className="text-lg font-bold mb-2 bg-green-300 rounded-lg p-2 w-fit">Terminados</h3>
           <ul>
             {trabajosTerminados.map((trabajo) => (
               <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded">
                     
             <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
-            <p>Descripción: {trabajo.descripcion}</p>
             <p>Estatus: {trabajo.estatus}</p>
             <p>Precio Total: ${trabajo.precioTotal.toFixed(2)}</p>
-            <button onClick={() => handleEdit(trabajo.id_trabajo)} className="mr-2 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700">
-  Editar
-</button>
+            <FontAwesomeIcon
+  icon={faEye}
+  className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+  onClick={() => handleEdit(trabajo.id_trabajo)}
+/>
             {editarModal && trabajoSeleccionado && (
               <div className='fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center'>
                 <div className='bg-white p-5 rounded flex flex-col justify-center items-center gap-5'>
@@ -194,9 +200,11 @@ const ListaTrabajos = () => {
                 </div>
               </div>
             )}
-            <button onClick={() => handleDelete(trabajo.id_trabajo)} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700" >
-              Eliminar
-            </button>
+            <FontAwesomeIcon
+  icon={faTrashAlt}
+  className="text-red-500 hover:text-red-700 cursor-pointer"
+  onClick={() => handleDelete(trabajo.id_trabajo)}
+/>
          
               </li>
             ))}

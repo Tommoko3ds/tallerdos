@@ -49,14 +49,14 @@ const Login = () => {
 
   return (
     <div className="App">
-      <div className="login-box">
+      <div className="login-box mt-8 mb-8">
         <img className="logito" src="https://llantasymecanica.com/wp-content/uploads/2023/04/servicio.png" alt="Logo" />
         <h2>¡Bienvenido!</h2>
-        { !secondStep && <p>Identificate con tu usuario y contraseña</p> }
+        { !secondStep && <p className='font-bold'>Identifícate con tu correo y contraseña</p> }
         <form>
           {!secondStep && (
             <>
-              <div className="user-box">
+              <div className="user-box mt-2">
                 <input 
                   type="email" 
                   placeholder="" 
@@ -64,7 +64,7 @@ const Login = () => {
                     setEmail(e.target.value);
                   }}
                   required />
-                <label>Username</label>
+                <label>Correo</label>
               </div>
               <div className="user-box">
                 <input 
@@ -74,7 +74,7 @@ const Login = () => {
                     setPassword(e.target.value);
                   }} 
                   required />
-                <label>Password</label>
+                <label>Contraseña</label>
               </div>
             </>
           )}

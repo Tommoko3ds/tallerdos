@@ -8,6 +8,18 @@ import SearchComponent from "./componentes/buscador";
 import ListaTrabajos from "./componentes/listaTrabajos";
 import { ProtectedRoute, ProtectedRouteLogin } from "./ProtectedRoute";
 
+
+
+let isLoggedIn = false;
+export function cambiarStatusLogin(acceso){
+  console.log("Acceso ----> antes: " + acceso);
+  if(acceso===1){
+    isLoggedIn = true;
+  }
+  else{isLoggedIn = false;}
+  console.log("Acceso ----> despues : " + acceso);
+}
+
 function App() {
   const [showModal, setShowModal] = useState(false);
 
@@ -18,10 +30,10 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route element={<ProtectedRouteLogin />}>
+          <Route element={<ProtectedRouteLogin isLoggedIn />}>
             <Route path="/" element={<Login />} />
           </Route>
-          <Route element={<ProtectedRoute/>}>
+          <Route element={<ProtectedRoute isLoggedIn/>}>
             <Route
               path="/Home/:id"
               element={

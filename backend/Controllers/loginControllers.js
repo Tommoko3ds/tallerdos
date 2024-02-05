@@ -93,7 +93,25 @@ function Login(request, response) {
 
   
 }
+function confirmarLogin(request, response) {
+  const { id, codigo } = request.body;
+
+  connection.query(
+    'UPDATE usuarios SET acceso = 1 WHERE id_usuario = ? AND codigo = ?',
+    [id, codigo],
+    (error, results) => {
+      if (error) {
+        console.error("Codigo del usuario es incorrecto: ", error);
+        response.status(500).json({ error: "Error interno del servidor parte del confirmLogin" });
+      } else {
+        console.log('Codigo del usuario es correcto');
+        response.status(200).json({ status: true });
+      }
+    }
+  );
+}
 
 module.exports = {
   Login,
+  confirmarLogin, 
 };

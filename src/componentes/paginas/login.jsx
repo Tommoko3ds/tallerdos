@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./login.css";
-import { cambiarStatusLogin } from "../../ProtectedRoute";
+import { cambiarStatusLogin } from "../../App";
 
 
 const Login = () => {
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => { 
-    e.preventDefault();
-    console.log(`Email: ${email}, Password: ${password}`);
-  };
+  const [secondStep, setSecondStep] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [securityCode, setSecurityCode] = useState('');
+  // const handleSubmit = (e) => { 
+  //   e.preventDefault();
+  //   console.log(`Email: ${email}, Password: ${password}`);
+  // };
   const Login = async () => {
     const escapedEmail = escape(email);
     const escapedPassword = escape(password);
@@ -26,12 +28,10 @@ const Login = () => {
     });
 
       if (response.data.status) {
-        const idUsuario = response.data.respuesta.userId;
-        const acceso = response.data.respuesta.acceso;
-        console.log(idUsuario);
-        cambiarStatusLogin(acceso);
-        console.log("Acceso ----> " + acceso);
-        window.location.href = `/Home/${idUsuario}`;
+        setUserId (response.data.respuesta.userId);
+        
+      setSecondStep (true);
+        
       } else {
         alert("Prueba con otro correo o contraseña");
       }
@@ -42,14 +42,15 @@ const Login = () => {
 
   const ConfirmLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/confirm-login/", {
-        userId: userId,
-        codigoSeguridad: securityCode,
+      const response = await axios.post("http://localhost:5000/login/confirmar", {
+        id: userId,
+        codigo: securityCode,
       });
 
       if (response.data.status) {
         // Autenticación exitosa, redirigir a la página de inicio
-        window.location.href = '/Home/${userId}';
+        cambiarStatusLogin(1);
+        window.location.href = `/Home/${userId}`;
       } else {
         alert('Código de seguridad incorrecto. Intenta de nuevo.');
       }
@@ -60,49 +61,57 @@ const Login = () => {
 
   return (
     <div className="App">
-      <div className="login-box">
-        <img
-          className="logito"
-          src="https://llantasymecanica.com/wp-content/uploads/2023/04/servicio.png"
-          alt="Logo"
-        />
-        <h2>¡Bienvenido!</h2>
-        <p>Identificate con tu usuario y contraseña para acceder</p>
-        <form>
+    <div className="login-box mt-8 mb-8">
+      <img className="logito" src="https://llantasymecanica.com/wp-content/uploads/2023/04/servicio.png" alt="Logo" />
+      <h2>¡Bienvenido!</h2>
+      { !secondStep && <p className='font-bold'>Identifícate con tu correo y contraseña</p> }
+      <form>
+        {!secondStep && (
+          <>
+            <div className="user-box mt-2">
+              <input 
+                type="email" 
+                placeholder="" 
+                onChange={(e) =>{
+                  setEmail(e.target.value);
+                }}
+                required />
+              <label>Correo</label>
+            </div>
+            <div className="user-box">
+              <input 
+                type="password"
+                placeholder=''
+                onChange={(e)=>{
+                  setPassword(e.target.value);
+                }} 
+                required />
+              <label>Contraseña</label>
+            </div>
+          </>
+        )}
+        {secondStep && (
           <div className="user-box">
-            <input
-              type="email"
-              placeholder=""
-              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+            <input 
+              type="text"
+              placeholder='Código de seguridad'
               onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              required
-            />
-            <label>Email</label>
+                setSecurityCode(e.target.value);
+              }} 
+              required />
+            <label>Ingrese el código que ha sido enviado a su correo.</label>
           </div>
-          <div className="user-box">
-            <input
-              type="password"
-              placeholder=""
-              minLength="8"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              required
-            />
-            <label>Password</label>
-          </div>
-          <a onClick={Login}>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Inicia Sesion
-          </a>
-        </form>
-      </div>
+        )}
+        <a onClick={secondStep ? ConfirmLogin : Login}>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          {secondStep ? 'Confirmar' : 'Inicia Sesion'}
+        </a>
+      </form>
     </div>
+  </div>
   );
 };
 export default Login;

@@ -67,11 +67,9 @@ const Header = () => {
       </div>
       <nav className="mt-2">
         <Link to="#inicio" className="mr-4 hover:text-gray-300">
-          Inicio
+          Cerrar Sesion
         </Link>
-        <Link to="#acerca-de" className="mr-4 hover:text-gray-300">
-          <img src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Eye Icon" width="20" height="20" />
-        </Link>
+  
         {isLoggedIn ? (
           <button onClick={handleLogout} className="ml-4 bg-white rounded-lg p-3 text-black hover:text-gray-30">
             Cerrar Sesión

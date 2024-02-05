@@ -7,9 +7,9 @@ export default function Modal() {
   const [modalAbierto, setModalAbierto] = useState(false);
 
   return (
-    <div>
+    <div className='p-12'>
       <button
-        className='bg-blue-700 text-white m-9 rounded-lg p-9 font-bold'
+        className='bg-blue-700 text-white m-9 rounded-lg p-4 font-bold'
         onClick={() => setModalAbierto(true)}
       >
         Agregar Trabajo

@@ -25,7 +25,7 @@ function App() {
               <div className="p-4">
                 <Header />
                 <h1 className='font-bold  m-8 float-left font- text-2xl '>LISTA DE TRABAJOS</h1>
-                <p className='float-left text-slate-500 text-justify'>Haz click en el boton de “Nuevo” para agregar un trabajo a la lista<br></br>
+                <p className='float-left pr-12 text-left text-slate-500 pt-20 '>Haz click en el boton de “Nuevo” para agregar un trabajo a la lista<br></br>
 Haz click en un trabajo existente para ver los detalles o actualizar la información</p>
                 <Modal showModal={showModal} closeModal={closeModal} />
                 <ListaTrabajos />

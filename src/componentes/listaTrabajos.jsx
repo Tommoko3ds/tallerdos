@@ -67,12 +67,12 @@ const ListaTrabajos = () => {
 
   
   const handleUpdateTrabajo = async () => {
-    if (!tituloEdit || !descripcionEdit || !tipoEdit || !estatusEdit || !horasEdit || !precioMaterialesEdit || !precioTotalEdit) {
-      alert("Por favor, complete todos los campos.");
-      return;
-    }
+    
     try {
-  
+      if (!tituloEdit || !descripcionEdit || !tipoEdit || !estatusEdit || !horasEdit || !precioMaterialesEdit || !precioTotalEdit) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
       const nuevoPrecio = NuevoPrecio(); // Calcula el nuevo precio
   
       const response = await axios.put(

@@ -16,14 +16,36 @@ const ListaTrabajos = () => {
   const[precioTotalEdit, setPrecioTotalEdit] = useState("");
   const[tipoMaterialEdit, setTipoMaterialEdit] = useState("");
     const [expandedDetails, setExpandedDetails] = useState({});
+    
 
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/jobs")
-      .then((response) => response.json())
-      .then((data) => setTrabajos(data))
-      .catch((error) => console.error(error));
-  }, []);
+    useEffect(() => {
+      const fetchLocationInfo = async () => {
+        try {
+          // Obtener la dirección IP del usuario
+          const responseIP = await axios.get("https://api64.ipify.org?format=json");
+          const userIP = responseIP.data.ip;
+          console.log("----> IP: "+userIP);
+          // Obtener la información de ubicación usando la dirección IP del usuario
+          const responseLocation = await axios.get(`https://ipinfo.io/${userIP}?token=0bc764109e1c08`);
+          const { country } = responseLocation.data;
+          console.log("----> country: "+country);
+      
+          if (country === "MX") {
+            // Si el país es México, obtener los trabajos
+            const jobsResponse = await axios.get("http://localhost:5000/api/jobs");
+            setTrabajos(jobsResponse.data);
+          } else {
+            alert("Acceso no permitido desde este país");
+          }
+        } catch (error) {
+          alert("Error al obtener la ubicación:", error);
+        }
+      };
+    
+      fetchLocationInfo();
+    }, []);
+    
+    
 
   const handleDelete = async (id_trabajo) => {
     console.log("Eliminando trabajo con ID:", id_trabajo);

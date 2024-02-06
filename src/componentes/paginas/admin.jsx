@@ -14,7 +14,7 @@ const UsersManagement = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  
   const fetchUsers = async () => {
     try {
       const response = await axios.get('http://localhost:5000/users/usuarios');
@@ -38,6 +38,10 @@ const UsersManagement = () => {
   };
 
   const handleAddUser = async () => {
+    if (!username || !password || !email) {
+      alert('Por favor, complete todos los campos.');
+      return;
+    }
     try {
       if (!username || !password || !email) {
         alert('Por favor, complete todos los campos.');
@@ -77,6 +81,10 @@ const UsersManagement = () => {
   };
 
   const handleUpdateUser = async () => {
+    if (!username || !password || !email) {
+      alert('Por favor, complete todos los campos.');
+      return;
+    }
     try {
       if (!username || !password || !email) {
         alert('Por favor, complete todos los campos.');

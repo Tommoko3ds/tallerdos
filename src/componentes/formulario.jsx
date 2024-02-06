@@ -50,6 +50,8 @@ export default function Formulario() {
         setPrecioMateriales('');
         setTipoTrabajo('Reparacion Mecanica');
         setPrecioTotal(0);
+        window.location.reload();
+
       } else {
         // If the response status is not 200, log an error message
         console.error('Error al guardar trabajo:', response.data.error);

@@ -57,9 +57,8 @@ function Login(request, response) {
         });
       } else {
         const userId = result[0].id_usuario;
-        const acceso = result[0].acceso;
         response.status(200).json({
-          respuesta: (userId,acceso),
+          respuesta: userId,
           status: true,
         });
 
@@ -95,17 +94,23 @@ function Login(request, response) {
 }
 function confirmarLogin(request, response) {
   const { id, codigo } = request.body;
+  console.log("----> id: "+id+" codigo: "+ codigo)
 
   connection.query(
     'UPDATE usuarios SET acceso = 1 WHERE id_usuario = ? AND codigo = ?',
     [id, codigo],
     (error, results) => {
       if (error) {
-        console.error("Codigo del usuario es incorrecto: ", error);
-        response.status(500).json({ error: "Error interno del servidor parte del confirmLogin" });
+        console.error("Error al actualizar el acceso del usuario: ", error);
+        response.status(500).json({ error: "Error interno del servidor al confirmar el login", status: false });
       } else {
-        console.log('Codigo del usuario es correcto');
-        response.status(200).json({ status: true });
+        if (results.affectedRows > 0) {
+          console.log('Código del usuario es correcto');
+          response.status(200).json({ status: true,acceso:true });
+        } else {
+          console.log('Código del usuario es incorrecto');
+          response.status(200).json({ status: false });
+        }
       }
     }
   );

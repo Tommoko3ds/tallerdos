@@ -65,7 +65,7 @@ function App() {
             <Route
               path="/users/:id"
               element={
-                <div className="p-4">
+                <div className="p-0">
                   <Header />
                   <UsersManagement />
                 </div>

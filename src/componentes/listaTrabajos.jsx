@@ -21,17 +21,17 @@ const ListaTrabajos = () => {
     useEffect(() => {
       const fetchLocationInfo = async () => {
         try {
-          // Obtener la dirección IP del usuario
+        
           const responseIP = await axios.get("https://api64.ipify.org?format=json");
           const userIP = responseIP.data.ip;
           console.log("----> IP: "+userIP);
-          // Obtener la información de ubicación usando la dirección IP del usuario
+          
           const responseLocation = await axios.get(`https://ipinfo.io/${userIP}?token=0bc764109e1c08`);
           const { country } = responseLocation.data;
           console.log("----> country: "+country);
       
           if (country === "MX") {
-            // Si el país es México, obtener los trabajos
+            
             const jobsResponse = await axios.get("http://localhost:5000/api/jobs");
             setTrabajos(jobsResponse.data);
           } else {
@@ -336,26 +336,30 @@ const ListaTrabajos = () => {
             <option value="Terminado">Terminado</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="horasEdit">Horas:</label>
-          <input
-            type="number"
-            id="horasEdit"
-            value={horasEdit}
-            onChange={(e) => setHorasEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="precioMaterialesEdit">Precio de Materiales:</label>
-          <input
-            type="number"
-            id="precioMaterialesEdit"
-            value={precioMaterialesEdit}
-            onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+        {estatusEdit === "En proceso" ? (
+          <>
+            <div>
+              <label htmlFor="horasEdit">Horas:</label>
+              <input
+                type="number"
+                id="horasEdit"
+                value={horasEdit}
+                onChange={(e) => setHorasEdit(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label htmlFor="precioMaterialesEdit">Precio de Materiales:</label>
+              <input
+                type="number"
+                id="precioMaterialesEdit"
+                value={precioMaterialesEdit}
+                onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          </>
+        ) : null}
       </div>
       <button
         className="bg-blue-700 text-white m-2 rounded-lg p-2 font-bold"
@@ -372,6 +376,7 @@ const ListaTrabajos = () => {
     </div>
   </div>
 )}
+
 
 
   </li>

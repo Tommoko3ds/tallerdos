@@ -1,5 +1,5 @@
 .App {
-    background: linear-gradient( #8e85dd, #9DACE8,#6f47ff);
+    background: linear-gradient( #3A4CEE, #7D94F1,#818CEE);
     height: 110vh; 
     display: flex;
     align-items: center;
@@ -18,7 +18,7 @@ div.login {
     margin:0;
     padding:0;
     font-family: sans-serif;
-    background: linear-gradient( #AB85DD, #9DACE8,#9747FF);
+    background: linear-gradient( #3A4CEE, #7D94F1,#818CEE);
   }
   
   .login-box {
@@ -30,7 +30,7 @@ div.login {
     width: 500px;
    padding: 50px;
     transform: translate(-50%, -50%);
-    background: linear-gradient( #e9dbfb, #c1caf0,#a96ef7);
+    background: linear-gradient(  #98a1f6, #96a4dc,#818CEE);
     box-sizing: border-box;
     box-shadow: 0 15px 25px rgba(0,0,0,.6);
     border-radius: 10px;

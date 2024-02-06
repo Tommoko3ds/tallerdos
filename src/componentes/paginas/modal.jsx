@@ -9,10 +9,10 @@ export default function Modal() {
   return (
     <div>
       <button
-        className="bg-blue-700 text-white m-9 rounded-lg p-2 font-bold"
+        className="bg-blue-700 text-white m-12 rounded-lg p-2 font-bold mr-40 float-start "
         onClick={() => setModalAbierto(true)}
       >
-        Agregar
+        Agregar Nuevo Trabajo
       </button>
       {modalAbierto && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">

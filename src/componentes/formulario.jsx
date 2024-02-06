@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function Formulario() {
-    const [trabajos, setTrabajos] = useState([]);
+  const [trabajos, setTrabajos] = useState([]);
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [horas, setHoras] = useState('');
@@ -21,14 +24,13 @@ export default function Formulario() {
       estatus,
       horas,
       precioMateriales,
+      
     };
 
     const precioCalculado = calcularPrecioTotal();
     setPrecioTotal(precioCalculado);
 
     formData.precioTotal = precioCalculado;
-
-    console.log('Form Data:', formData);
 
     try {
       const response = await axios.post('http://localhost:5000/api/jobs', formData);
@@ -57,11 +59,11 @@ export default function Formulario() {
       console.error('Error de red al enviar datos:', error);
     }
   };
+
   const handleTipoTrabajoChange = (event) => {
     setTipoTrabajo(event.target.value);
   };
 
-  // Assume you have the following function defined for calculating the total price
   const calcularPrecioTotal = () => {
     const horasFloat = parseFloat(horas);
     const precioMaterialesFloat = parseFloat(precioMateriales);
@@ -85,82 +87,91 @@ export default function Formulario() {
     return precioTipoTrabajo;
   };
 
-
-
   return (
-    <div className="z-50 bg-white p-8 rounded shadow-md w-96">
-      <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="titulo">Título:</label>
-            <input
-              type="text"
-              id="titulo"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="descripcion">Descripción:</label>
-            <textarea
-              id="descripcion"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="horas">Horas:</label>
-            <input
-              type="number"
-              id="horas"
-              value={horas}
-              onChange={(e) => setHoras(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="estatus">Estatus:</label>
-            <select
-              id="estatus"
-              value={estatus}
-              onChange={(e) => setEstatus(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
-              <option value="En proceso">En proceso</option>
-              <option value="Terminado">Terminado</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="precioMateriales">Precio de Material:</label>
-            <input
-              type="number"
-              id="precioMateriales"
-              value={precioMateriales}
-              onChange={(e) => setPrecioMateriales(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="tipoTrabajo">Tipo de Trabajo:</label>
-            <select
-              id="tipoTrabajo"
-              value={tipoTrabajo}
-              onChange={handleTipoTrabajoChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="Reparacion Mecanica">Reparación Mecánica</option>
-              <option value="Reparacion Chapa y Pintura">Reparación Chapa y Pintura</option>
-              <option value="Revision">Revisión</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+      <form onSubmit={handleSubmit} className="space-y-2 w-96">
+        <h1 className='font-bold text-2xl'>Ingresa los detalles del trabajo</h1>
+        <div>
+          <label htmlFor="titulo" className="block text-sm font-medium text-gray-600">
+            Título:
+          </label>
+          <input
+            type="text"
+            id="titulo"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            className="mt-1 p-2 border rounded w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor="descripcion" className="block text-sm font-medium text-gray-600">
+            Descripción:
+          </label>
+          <textarea
+            id="descripcion"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            className="mt-1 p-2 border rounded w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor="horas" className="block text-sm font-medium text-gray-600">
+            Horas:
+          </label>
+          <input
+            type="number"
+            id="horas"
+            value={horas}
+            onChange={(e) => setHoras(e.target.value)}
+            className="mt-1 p-2 border rounded w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor="estatus" className="block text-sm font-medium text-gray-600">
+            Estatus:
+          </label>
+          <select
+            id="estatus"
+            value={estatus}
+            onChange={(e) => setEstatus(e.target.value)}
+            className="mt-1 p-2 border rounded w-full"
           >
-            Calcular Precio Total
-          </button>
-        </form>
-    </div>
+            <option value="En proceso">En proceso</option>
+            <option value="Terminado">Terminado</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="precioMateriales" className="block text-sm font-medium text-gray-600">
+            Precio de Material:
+          </label>
+          <input
+            type="number"
+            id="precioMateriales"
+            value={precioMateriales}
+            onChange={(e) => setPrecioMateriales(e.target.value)}
+            className="mt-1 p-2 border rounded w-full"
+          />
+        </div>
+        <div>
+          <label htmlFor="tipoTrabajo" className="block text-sm font-medium text-gray-600">
+            Tipo de Trabajo:
+          </label>
+          <select
+            id="tipoTrabajo"
+            value={tipoTrabajo}
+            onChange={handleTipoTrabajoChange}
+            className="mt-1 p-2 border rounded w-full"
+          >
+            <option value="Reparacion Mecanica">Reparación Mecánica</option>
+            <option value="Reparacion Chapa y Pintura">Reparación Chapa y Pintura</option>
+            <option value="Revision">Revisión</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mx-auto block"
+        >
+          Guardar
+        </button>
+      </form>
   );
 }

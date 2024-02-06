@@ -6,7 +6,7 @@ import Header from "./componentes/header";
 import UsersManagement from "./componentes/paginas/admin";
 import SearchComponent from "./componentes/buscador";
 import ListaTrabajos from "./componentes/listaTrabajos";
-import { ProtectedRoute, ProtectedRouteLogin } from "./ProtectedRoute";
+import { ProtectedRoute, ProtectedRouteLogin,ProtectedAdmin } from "./ProtectedRoute";
 import {useAuth,AuthProvider } from './AuthContext';
 
 
@@ -58,10 +58,7 @@ function App() {
               </div>
               }
             />
-            </Route>
-
-            {/* Nueva ruta para la gestión de usuarios */}
-            <Route element={<ProtectedRoute isLoggedIn={useAuth().isLoggedIn}/>}>
+            <Route element={<ProtectedAdmin rol={useAuth().rol} />}>
             <Route
               path="/users/:id"
               element={
@@ -72,7 +69,10 @@ function App() {
               }
             />
             </Route>
-          
+            </Route>
+
+            {/* Nueva ruta para la gestión de usuarios */}
+            
         </Routes>
       </div>
     </Router>

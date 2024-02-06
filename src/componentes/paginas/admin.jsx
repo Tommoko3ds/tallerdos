@@ -3,7 +3,9 @@ import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 
-const UsersManagement = () => {
+
+const UsersManagement = ()=> {
+  
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

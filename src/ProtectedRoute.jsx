@@ -27,7 +27,18 @@ export const ProtectedRouteLogin = ({ isLoggedIn,redirectPath = "/Home/:id" }) =
   return <Navigate to={redirectPath} replace />
  }
  
+ 
  return <Outlet></Outlet>
 };
 
 
+export const ProtectedAdmin = ({ rol,redirectPath = "/Home/:id" }) => {
+
+
+    if (!rol) {
+     return <Navigate to={redirectPath} replace />
+    }
+    
+    
+    return <Outlet></Outlet>
+   };

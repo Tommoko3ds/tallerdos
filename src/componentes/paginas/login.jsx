@@ -11,7 +11,7 @@ const Login = () => {
   const [secondStep, setSecondStep] = useState(false);
   const [userId, setUserId] = useState('');
   const [securityCode, setSecurityCode] = useState('');
-  const { login } = useAuth();
+  const { login,rolando,noRolando} = useAuth();
   const [rol,setRol] = useState('');
   
   // const handleSubmit = (e) => { 
@@ -54,10 +54,14 @@ const Login = () => {
       if (response.data.status) {
         login();
         if(rol === 1){
+          rolando();
           return window.location.href = `/users/${userId}`;
           
         }
-        else{window.location.href = `/Home/${userId}`;
+        else{
+          noRolando();
+          return window.location.href = `/Home/${userId}`;
+
       return;}
         
       } else {

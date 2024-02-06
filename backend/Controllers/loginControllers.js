@@ -47,7 +47,7 @@ function Login(request, response) {
   const password = request.body.contrasena;
 
   connection.query(
-    `SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?`,
+    `SELECT usuarios.id_usuario, usuarios.rol FROM usuarios WHERE correo = ? AND contrasena = ?`,
     [email, password],
     (error, result) => {
       if (result.length === 0) {
@@ -57,8 +57,9 @@ function Login(request, response) {
         });
       } else {
         const userId = result[0].id_usuario;
+        
         response.status(200).json({
-          respuesta: userId,
+          respuesta: result[0],
           status: true,
         });
 

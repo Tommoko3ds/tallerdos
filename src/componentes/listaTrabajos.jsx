@@ -5,8 +5,6 @@ import { faEdit, faEye, faTrashAlt, faPenToSquare } from "@fortawesome/free-soli
 
 const ListaTrabajos = () => {
   const [trabajos, setTrabajos] = useState([]);
-  const [precioTotalOriginal, setPrecioTotalOriginal] = useState("");
-
   const [editarModal, setEditarModal] = useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
   const [tituloEdit, setTituloEdit] = useState("");
@@ -15,11 +13,10 @@ const ListaTrabajos = () => {
   const [estatusEdit, setEstatusEdit] = useState("");
   const [horasEdit, setHorasEdit] = useState("");
   const [precioMaterialesEdit, setPrecioMaterialesEdit] = useState("");
-  const [precioTotalEdit, setPrecioTotalEdit] = useState("");
-  const [tipoMaterialEdit, setTipoMaterialEdit] = useState("");
-  const [tipoTrabajo, setTipoTrabajo] = useState('Reparacion Mecanica');
-  const [expandedDetails, setExpandedDetails] = useState({});
-  const [filtro, setFiltro] = useState("");
+  const[precioTotalEdit, setPrecioTotalEdit] = useState("");
+  const[tipoMaterialEdit, setTipoMaterialEdit] = useState("");
+    const [expandedDetails, setExpandedDetails] = useState({});
+
 
   useEffect(() => {
     fetch("http://localhost:5000/api/jobs")
@@ -43,30 +40,18 @@ const ListaTrabajos = () => {
     const trabajoSeleccionado = trabajos.find(
       (trabajo) => trabajo.id_trabajo === id_trabajo
     );
-  
-    // Verificar si el estatus es "Terminado"
-    if (trabajoSeleccionado.estatus === "Terminado") {
-      // Si es "Terminado", deshabilitar la edición de horas y precio de materiales
-      setHorasEdit(trabajoSeleccionado.horas);
-      setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
-    } 
     setTrabajoSeleccionado(trabajoSeleccionado);
     setTituloEdit(trabajoSeleccionado.titulo);
     setDescripcionEdit(trabajoSeleccionado.descripcion);
     setTipoEdit(trabajoSeleccionado.tipo);
     setEstatusEdit(trabajoSeleccionado.estatus);
-    setPrecioTotalEdit(trabajoSeleccionado.precioTotal);
-    setPrecioTotalOriginal(trabajoSeleccionado.precioTotal);
+    setHorasEdit(trabajoSeleccionado.horas);
+    setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
     setEditarModal(true);
   };
   
-  
-  const handleTipoTrabajoChange = (event) => {
-    setTipoEdit(event.target.value); // Cambia setTipoTrabajo a setTipoEdit
-  };
-
-  
   const handleUpdateTrabajo = async () => {
+<<<<<<< HEAD
     
     try {
       if (!tituloEdit || !descripcionEdit || !tipoEdit || !estatusEdit || !horasEdit || !precioMaterialesEdit || !precioTotalEdit) {
@@ -75,6 +60,14 @@ const ListaTrabajos = () => {
       }
       const nuevoPrecio = NuevoPrecio(); // Calcula el nuevo precio
   
+=======
+    try {
+      if (!tituloEdit ) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+>>>>>>> 53373033a3b2707e353d1ff3d68650d0f6a6b009
       const response = await axios.put(
         `http://localhost:5000/api/jobs/${trabajoSeleccionado.id_trabajo}`,
         {
@@ -84,12 +77,13 @@ const ListaTrabajos = () => {
           tipo: tipoEdit,
           horas: horasEdit,
           precioMateriales: precioMaterialesEdit,
-          precioTotal: nuevoPrecio, // Actualiza el precioTotal con el nuevo precio calculado
+          precioTotal: precioTotalEdit,
         }
       );
-  
       if (response.status === 200) {
-        const updatedResponse = await axios.get("http://localhost:5000/api/jobs");
+        const updatedResponse = await axios.get(
+          "http://localhost:5000/api/jobs"
+        );
         setTrabajos(updatedResponse.data);
         setTituloEdit("");
         setDescripcionEdit("");
@@ -104,7 +98,10 @@ const ListaTrabajos = () => {
       console.error("Error de red al actualizar trabajo:", error);
     }
   };
-  
+
+ 
+  const trabajosEnProceso = trabajos.filter((trabajo) => trabajo.estatus === "En proceso");
+  const trabajosTerminados = trabajos.filter((trabajo) => trabajo.estatus === "Terminado");
 
 
   const handleViewDetails = (id_trabajo) => {
@@ -121,76 +118,15 @@ const ListaTrabajos = () => {
     }));
   };
 
-  const filtrarTrabajos = () => {
-    if (!filtro) {
-      return trabajos;
-    }
-
-    return trabajos.filter((trabajo) =>
-      trabajo.titulo.toLowerCase().includes(filtro.toLowerCase())
-    );
-  };
-
-  const trabajosEnProceso = Array.isArray(trabajos)
-    ? filtrarTrabajos().filter((trabajo) => trabajo.estatus === "En proceso")
-    : [];
-
-  const trabajosTerminados = Array.isArray(trabajos)
-    ? filtrarTrabajos().filter((trabajo) => trabajo.estatus === "Terminado")
-    : [];
-
-    const NuevoPrecio = () => {
-      const horasEditFloat = parseFloat(horasEdit);
-      const precioMaterialesEditFloat = parseFloat(precioMaterialesEdit);
-  
-      let precioTipoTrabajo = 0;
-  
-      switch (tipoEdit) {
-        case 'Reparacion Mecanica':
-          precioTipoTrabajo = horasEditFloat * 350 + precioMaterialesEditFloat * 1.1;
-          break;
-        case 'Reparacion Chapa y Pintura':
-          precioTipoTrabajo = horasEditFloat * 350 + precioMaterialesEditFloat * 1.3;
-          break;
-        case 'Revision':
-          precioTipoTrabajo = horasEditFloat * 350 + 450;
-          break;
-        default:
-          break;
-      }
-  
-      return precioTipoTrabajo;
-    };
-   
-  
-
-
-return (
+  return (
     <div>
-      <div className="mb-4">
-      <input
-  type="text"
-  placeholder="Buscar trabajo por titulo..."
-  value={filtro}
-  onChange={(e) => setFiltro(e.target.value)}
-  className="w-64 p-2 border rounded" 
-/>
-
-    <button
-      className="bg-blue-500 text-white px-4 py-2 ml-2 rounded"
-      onClick={() => setFiltro("")}
-    >
-      Cancelar
-    </button>
-  
-  </div>
       <div className="flex">
         <div className="w-1/2 pr-4">
           <h3 className="text-lg font-bold mb-2 bg-orange-300 rounded-lg p-2 w-fit">
             En proceso
           </h3>
           <ul>
-            {trabajosEnProceso.map((trabajo) => (
+             {trabajosEnProceso.map((trabajo) => (
               <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded shadow-md flex justify-between items-center">
                 <div>
                   <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
@@ -281,32 +217,6 @@ return (
             onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
             className="w-full p-2 border rounded"
           />
-
-        </div>
-        <div>
-        <label htmlFor="tipoTrabajo" className="block text-sm font-medium text-gray-600">
-          Tipo de Trabajo:
-        </label>
-        <select
-          id="tipoTrabajo"
-          value={tipoEdit}
-          onChange={handleTipoTrabajoChange}
-          className="mt-1 p-2 border rounded w-full"
-        >
-          <option value="Reparacion Mecanica">Reparación Mecánica</option>
-          <option value="Reparacion Chapa y Pintura">Reparación Chapa y Pintura</option>
-          <option value="Revision">Revisión</option>
-        </select>
-      </div>
-        <div>
-          <label htmlFor="precioTotal">Precio Total:</label>
-          <input
-            type="number"
-            id="precioTotal"
-            value={precioTotalEdit}
-            onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
         </div>
       </div>
       <button
@@ -325,6 +235,12 @@ return (
   </div>
 )}
 
+
+
+
+
+
+
   </li>
 ))}
           </ul>
@@ -334,7 +250,7 @@ return (
             Terminados
           </h3>
           <ul>
-            {trabajosTerminados.map((trabajo) => (
+          {trabajosTerminados.map((trabajo) => (
   <li key={trabajo.id_trabajo} className="mb-4 border shadow-md p-4 rounded flex justify-between items-center">
     <div>
       <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
@@ -425,16 +341,6 @@ return (
             type="number"
             id="precioMaterialesEdit"
             value={precioMaterialesEdit}
-            onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="precioTotal">Precio Total:</label>
-          <input
-            type="number"
-            id="precioTotal"
-            value={precioTotalEdit}
             onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
             className="w-full p-2 border rounded"
           />

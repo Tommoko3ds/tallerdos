@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./login.css";
-import { cambiarStatusLogin } from "../../App";
+import { useAuth } from '../../AuthContext';
 
 
 const Login = () => {
@@ -11,13 +11,15 @@ const Login = () => {
   const [secondStep, setSecondStep] = useState(false);
   const [userId, setUserId] = useState('');
   const [securityCode, setSecurityCode] = useState('');
+  const { isLoggedIn, login, logout } = useAuth();
+  console.log("isLoggedIn Antes: "+isLoggedIn);
   // const handleSubmit = (e) => { 
   //   e.preventDefault();
   //   console.log(`Email: ${email}, Password: ${password}`);
   // };
   const Login = async () => {
     const escapedEmail = escape(email);
-    const escapedPassword = escape(password);
+    const escapedPassword = escape(password); 
     
 
     try {
@@ -28,7 +30,8 @@ const Login = () => {
     });
 
       if (response.data.status) {
-        setUserId (response.data.respuesta.userId);
+        console.log(response.data.respuesta);
+        setUserId (response.data.respuesta);
         
       setSecondStep (true);
         
@@ -49,8 +52,11 @@ const Login = () => {
 
       if (response.data.status) {
         // Autenticación exitosa, redirigir a la página de inicio
-        cambiarStatusLogin(1);
-        window.location.href = `/Home/${userId}`;
+        login();
+        setTimeout(() => {
+          console.log("isLoggedIn Después: " + isLoggedIn);
+          window.location.href = `/Home/${userId}`;
+        }, 100);
       } else {
         alert('Código de seguridad incorrecto. Intenta de nuevo.');
       }

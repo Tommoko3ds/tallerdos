@@ -43,17 +43,23 @@ const ListaTrabajos = () => {
     const trabajoSeleccionado = trabajos.find(
       (trabajo) => trabajo.id_trabajo === id_trabajo
     );
+  
+    // Verificar si el estatus es "Terminado"
+    if (trabajoSeleccionado.estatus === "Terminado") {
+      // Si es "Terminado", deshabilitar la edición de horas y precio de materiales
+      setHorasEdit(trabajoSeleccionado.horas);
+      setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
+    } 
     setTrabajoSeleccionado(trabajoSeleccionado);
     setTituloEdit(trabajoSeleccionado.titulo);
     setDescripcionEdit(trabajoSeleccionado.descripcion);
     setTipoEdit(trabajoSeleccionado.tipo);
     setEstatusEdit(trabajoSeleccionado.estatus);
-    setHorasEdit(trabajoSeleccionado.horas);
-    setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
     setPrecioTotalEdit(trabajoSeleccionado.precioTotal);
-    setPrecioTotalOriginal(trabajoSeleccionado.precioTotal); // Guarda el precio original
+    setPrecioTotalOriginal(trabajoSeleccionado.precioTotal);
     setEditarModal(true);
   };
+  
   
   const handleTipoTrabajoChange = (event) => {
     setTipoEdit(event.target.value); // Cambia setTipoTrabajo a setTipoEdit
@@ -61,11 +67,11 @@ const ListaTrabajos = () => {
 
   
   const handleUpdateTrabajo = async () => {
+    if (!tituloEdit || !descripcionEdit || !tipoEdit || !estatusEdit || !horasEdit || !precioMaterialesEdit || !precioTotalEdit) {
+      alert("Por favor, complete todos los campos.");
+      return;
+    }
     try {
-      if (!tituloEdit) {
-        alert("Por favor, complete todos los campos.");
-        return;
-      }
   
       const nuevoPrecio = NuevoPrecio(); // Calcula el nuevo precio
   

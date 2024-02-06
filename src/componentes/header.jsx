@@ -19,7 +19,7 @@ const Header = () => {
         {isLoggedIn ? (
           <button
             onClick={() => logout()}
-            className="ml-4 bg-white rounded-lg p-3 text-black hover:text-gray-30"
+            className="ml-4 bg-white rounded-lg p-2 text-gray-700 font-medium hover:text-gray-500"
           >
             Cerrar Sesión
           </button>

@@ -14,6 +14,10 @@ export default function Formulario() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!titulo || !descripcion || !horas || !precioMateriales) {
+      alert("Ey, no pueden haber campos vacíos.");
+      return;
+    }
 
     const formData = {
       titulo,

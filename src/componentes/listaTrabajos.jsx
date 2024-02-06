@@ -151,7 +151,28 @@ const ListaTrabajos = () => {
   const trabajosTerminados = Array.isArray(trabajos)
     ? filtrarTrabajos().filter((trabajo) => trabajo.estatus === "Terminado")
     : [];
-
+    const NuevoPrecio = () => {
+      const horasEditFloat = parseFloat(horasEdit);
+      const precioMaterialesEditFloat = parseFloat(precioMaterialesEdit);
+  
+      let precioTipoTrabajo = 0;
+  
+      switch (tipoEdit) {
+        case 'Reparacion Mecanica':
+          precioTipoTrabajo = horasEditFloat * 350 + precioMaterialesEditFloat * 1.1;
+          break;
+        case 'Reparacion Chapa y Pintura':
+          precioTipoTrabajo = horasEditFloat * 350 + precioMaterialesEditFloat * 1.3;
+          break;
+        case 'Revision':
+          precioTipoTrabajo = horasEditFloat * 350 + 450;
+          break;
+        default:
+          break;
+      }
+  
+      return precioTipoTrabajo;
+    };
   return (
     <div>
       <div className="mb-4">

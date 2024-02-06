@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faEye, faTrashAlt, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faEye,
+  faTrashAlt,
+  faPenToSquare,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ListaTrabajos = () => {
   const [trabajos, setTrabajos] = useState([]);
@@ -13,39 +18,41 @@ const ListaTrabajos = () => {
   const [estatusEdit, setEstatusEdit] = useState("");
   const [horasEdit, setHorasEdit] = useState("");
   const [precioMaterialesEdit, setPrecioMaterialesEdit] = useState("");
-  const[precioTotalEdit, setPrecioTotalEdit] = useState("");
-  const[tipoMaterialEdit, setTipoMaterialEdit] = useState("");
-    const [expandedDetails, setExpandedDetails] = useState({});
-    
+  const [precioTotalEdit, setPrecioTotalEdit] = useState("");
+  const [tipoMaterialEdit, setTipoMaterialEdit] = useState("");
+  const [expandedDetails, setExpandedDetails] = useState({});
+  const [filtro, setFiltro] = useState("");
 
-    useEffect(() => {
-      const fetchLocationInfo = async () => {
-        try {
-        
-          const responseIP = await axios.get("https://api64.ipify.org?format=json");
-          const userIP = responseIP.data.ip;
-          console.log("----> IP: "+userIP);
-          
-          const responseLocation = await axios.get(`https://ipinfo.io/${userIP}?token=0bc764109e1c08`);
-          const { country } = responseLocation.data;
-          console.log("----> country: "+country);
-      
-          if (country === "MX") {
-            
-            const jobsResponse = await axios.get("http://localhost:5000/api/jobs");
-            setTrabajos(jobsResponse.data);
-          } else {
-            alert("Acceso no permitido desde este país");
-          }
-        } catch (error) {
-          alert("Error al obtener la ubicación:", error);
+  useEffect(() => {
+    const fetchLocationInfo = async () => {
+      try {
+        const responseIP = await axios.get(
+          "https://api64.ipify.org?format=json"
+        );
+        const userIP = responseIP.data.ip;
+        console.log("----> IP: " + userIP);
+
+        const responseLocation = await axios.get(
+          `https://ipinfo.io/${userIP}?token=0bc764109e1c08`
+        );
+        const { country } = responseLocation.data;
+        console.log("----> country: " + country);
+
+        if (country === "MX") {
+          const jobsResponse = await axios.get(
+            "http://localhost:5000/api/jobs"
+          );
+          setTrabajos(jobsResponse.data);
+        } else {
+          alert("Acceso no permitido desde este país");
         }
-      };
-    
-      fetchLocationInfo();
-    }, []);
-    
-    
+      } catch (error) {
+        alert("Error al obtener la ubicación:", error);
+      }
+    };
+
+    fetchLocationInfo();
+  }, []);
 
   const handleDelete = async (id_trabajo) => {
     console.log("Eliminando trabajo con ID:", id_trabajo);
@@ -71,10 +78,10 @@ const ListaTrabajos = () => {
     setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
     setEditarModal(true);
   };
-  
+
   const handleUpdateTrabajo = async () => {
     try {
-      if (!tituloEdit ) {
+      if (!tituloEdit) {
         alert("Por favor, complete todos los campos.");
         return;
       }
@@ -110,11 +117,6 @@ const ListaTrabajos = () => {
     }
   };
 
- 
-  const trabajosEnProceso = trabajos.filter((trabajo) => trabajo.estatus === "En proceso");
-  const trabajosTerminados = trabajos.filter((trabajo) => trabajo.estatus === "Terminado");
-
-
   const handleViewDetails = (id_trabajo) => {
     // Encuentra el trabajo correspondiente en los trabajos terminados
     const trabajoSeleccionado = trabajosTerminados.find(
@@ -125,20 +127,54 @@ const ListaTrabajos = () => {
     // Actualiza el estado para mostrar los detalles
     setExpandedDetails((prevDetails) => ({
       ...prevDetails,
-      [id_trabajo]: !prevDetails[id_trabajo]
+      [id_trabajo]: !prevDetails[id_trabajo],
     }));
   };
+  const filtrarTrabajos = () => {
+    if (!filtro) {
+      return trabajos;
+    }
+
+    return trabajos.filter((trabajo) =>
+      trabajo.titulo.toLowerCase().includes(filtro.toLowerCase())
+    );
+  };
+  const trabajosEnProceso = Array.isArray(trabajos)
+    ? filtrarTrabajos().filter((trabajo) => trabajo.estatus === "En proceso")
+    : [];
+
+  const trabajosTerminados = Array.isArray(trabajos)
+    ? filtrarTrabajos().filter((trabajo) => trabajo.estatus === "Terminado")
+    : [];
 
   return (
     <div>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Buscar trabajo..."
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        <button
+          className="bg-blue-500 text-white px-4 py-2 ml-2 rounded"
+          onClick={() => setFiltro("")}
+        >
+          Cancelar Busqueda
+        </button>
+      </div>
       <div className="flex">
         <div className="w-1/2 pr-4">
           <h3 className="text-lg font-bold mb-2 bg-orange-300 rounded-lg p-2 w-fit">
             En proceso
           </h3>
           <ul>
-             {trabajosEnProceso.map((trabajo) => (
-              <li key={trabajo.id_trabajo} className="mb-4 border p-4 rounded shadow-md flex justify-between items-center">
+            {trabajosEnProceso.map((trabajo) => (
+              <li
+                key={trabajo.id_trabajo}
+                className="mb-4 border p-4 rounded shadow-md flex justify-between items-center"
+              >
                 <div>
                   <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
                   <div className="flex flex-row">
@@ -156,11 +192,11 @@ const ListaTrabajos = () => {
                   )}
                 </div>
                 <div>
-                <FontAwesomeIcon
-  icon={faEye}
-  className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-  onClick={() => handleViewDetails(trabajo.id_trabajo)} // Usa el nuevo método handleViewDetails
-/>
+                  <FontAwesomeIcon
+                    icon={faEye}
+                    className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    onClick={() => handleViewDetails(trabajo.id_trabajo)} // Usa el nuevo método handleViewDetails
+                  />
                   <FontAwesomeIcon
                     icon={faPenToSquare}
                     className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
@@ -171,89 +207,92 @@ const ListaTrabajos = () => {
                     className="text-red-500 hover:text-red-700 cursor-pointer"
                     onClick={() => handleDelete(trabajo.id_trabajo)}
                   />
-                 </div>
+                </div>
 
-                 {editarModal && trabajoSeleccionado && trabajoSeleccionado.id_trabajo === trabajo.id_trabajo && (
-  <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
-    <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
-      <h4 className="text-lg font-bold">Editar Trabajo</h4>
-      <div className="grid grid-cols-2 gap-4 w-full">
-        <div>
-          <label htmlFor="tituloEdit">Título:</label>
-          <input
-            type="text"
-            id="tituloEdit"
-            value={tituloEdit}
-            onChange={(e) => setTituloEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="descripcionEdit">Descripción:</label>
-          <textarea
-            id="descripcionEdit"
-            value={descripcionEdit}
-            onChange={(e) => setDescripcionEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="estatusEdit">Estatus:</label>
-          <select
-            id="estatusEdit"
-            value={estatusEdit}
-            onChange={(e) => setEstatusEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="En proceso">En proceso</option>
-            <option value="Terminado">Terminado</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="horasEdit">Horas:</label>
-          <input
-            type="number"
-            id="horasEdit"
-            value={horasEdit}
-            onChange={(e) => setHorasEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="precioMaterialesEdit">Precio de Materiales:</label>
-          <input
-            type="number"
-            id="precioMaterialesEdit"
-            value={precioMaterialesEdit}
-            onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-      </div>
-      <button
-        className="bg-blue-700 text-white m-2 rounded-lg p-2 font-bold"
-        onClick={handleUpdateTrabajo}
-      >
-        Guardar
-      </button>
-      <button
-        className="bg-red-500 text-white m-2 rounded-lg p-2 font-bold"
-        onClick={() => setEditarModal(false)}
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-)}
-
-
-
-
-
-
-
-  </li>
-))}
+                {editarModal &&
+                  trabajoSeleccionado &&
+                  trabajoSeleccionado.id_trabajo === trabajo.id_trabajo && (
+                    <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
+                      <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
+                        <h4 className="text-lg font-bold">Editar Trabajo</h4>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                          <div>
+                            <label htmlFor="tituloEdit">Título:</label>
+                            <input
+                              type="text"
+                              id="tituloEdit"
+                              value={tituloEdit}
+                              onChange={(e) => setTituloEdit(e.target.value)}
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="descripcionEdit">
+                              Descripción:
+                            </label>
+                            <textarea
+                              id="descripcionEdit"
+                              value={descripcionEdit}
+                              onChange={(e) =>
+                                setDescripcionEdit(e.target.value)
+                              }
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="estatusEdit">Estatus:</label>
+                            <select
+                              id="estatusEdit"
+                              value={estatusEdit}
+                              onChange={(e) => setEstatusEdit(e.target.value)}
+                              className="w-full p-2 border rounded"
+                            >
+                              <option value="En proceso">En proceso</option>
+                              <option value="Terminado">Terminado</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label htmlFor="horasEdit">Horas:</label>
+                            <input
+                              type="number"
+                              id="horasEdit"
+                              value={horasEdit}
+                              onChange={(e) => setHorasEdit(e.target.value)}
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="precioMaterialesEdit">
+                              Precio de Materiales:
+                            </label>
+                            <input
+                              type="number"
+                              id="precioMaterialesEdit"
+                              value={precioMaterialesEdit}
+                              onChange={(e) =>
+                                setPrecioMaterialesEdit(e.target.value)
+                              }
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                        </div>
+                        <button
+                          className="bg-blue-700 text-white m-2 rounded-lg p-2 font-bold"
+                          onClick={handleUpdateTrabajo}
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          className="bg-red-500 text-white m-2 rounded-lg p-2 font-bold"
+                          onClick={() => setEditarModal(false)}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+              </li>
+            ))}
           </ul>
         </div>
         <div className="w-1/2 pl-4">
@@ -261,127 +300,132 @@ const ListaTrabajos = () => {
             Terminados
           </h3>
           <ul>
-          {trabajosTerminados.map((trabajo) => (
-  <li key={trabajo.id_trabajo} className="mb-4 border shadow-md p-4 rounded flex justify-between items-center">
-    <div>
-      <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
-      <div className="flex flex-row">
-        <p className="mr-8">Tipo: {trabajo.tipo}</p>
-        <p>Horas: {trabajo.horas}</p>
-      </div>
-      {expandedDetails[trabajo.id_trabajo] && (
-        <div className="expanded-details">
-          <p>Descripción: {trabajo.descripcion}</p>
-          <p>Estatus: {trabajo.estatus}</p>
-          <p>Precio de materiales: {trabajo.precioMateriales}</p>
-          <p>Total: ${trabajo.precioTotal}</p>
-        </div>
-      )}
-    </div>
-    <div>
-      <FontAwesomeIcon
-        icon={faEye}
-        className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-        onClick={() => handleViewDetails(trabajo.id_trabajo)}
-      />
-      <FontAwesomeIcon
-        icon={faPenToSquare}
-        className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-        onClick={() => handleEdit(trabajo.id_trabajo)}
-      />
-      <FontAwesomeIcon
-        icon={faTrashAlt}
-        className="text-gray-500 hover:text-gray-700 cursor-pointer"
-        onClick={() => handleDelete(trabajo.id_trabajo)}
-      />
-    </div>
+            {trabajosTerminados.map((trabajo) => (
+              <li
+                key={trabajo.id_trabajo}
+                className="mb-4 border shadow-md p-4 rounded flex justify-between items-center"
+              >
+                <div>
+                  <h4 className="text-lg font-bold">{trabajo.titulo}</h4>
+                  <div className="flex flex-row">
+                    <p className="mr-8">Tipo: {trabajo.tipo}</p>
+                    <p>Horas: {trabajo.horas}</p>
+                  </div>
+                  {expandedDetails[trabajo.id_trabajo] && (
+                    <div className="expanded-details">
+                      <p>Descripción: {trabajo.descripcion}</p>
+                      <p>Estatus: {trabajo.estatus}</p>
+                      <p>Precio de materiales: {trabajo.precioMateriales}</p>
+                      <p>Total: ${trabajo.precioTotal}</p>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <FontAwesomeIcon
+                    icon={faEye}
+                    className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    onClick={() => handleViewDetails(trabajo.id_trabajo)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    className="mr-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    onClick={() => handleEdit(trabajo.id_trabajo)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                    onClick={() => handleDelete(trabajo.id_trabajo)}
+                  />
+                </div>
 
-
-
-
-
-    {editarModal && trabajoSeleccionado && trabajoSeleccionado.id_trabajo === trabajo.id_trabajo && (
-  <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
-    <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
-      <h4 className="text-lg font-bold">Editar Trabajo</h4>
-      <div className="grid grid-cols-2 gap-4 w-full">
-        <div>
-          <label htmlFor="tituloEdit">Título:</label>
-          <input
-            type="text"
-            id="tituloEdit"
-            value={tituloEdit}
-            onChange={(e) => setTituloEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="descripcionEdit">Descripción:</label>
-          <textarea
-            id="descripcionEdit"
-            value={descripcionEdit}
-            onChange={(e) => setDescripcionEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="estatusEdit">Estatus:</label>
-          <select
-            id="estatusEdit"
-            value={estatusEdit}
-            onChange={(e) => setEstatusEdit(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="En proceso">En proceso</option>
-            <option value="Terminado">Terminado</option>
-          </select>
-        </div>
-        {estatusEdit === "En proceso" ? (
-          <>
-            <div>
-              <label htmlFor="horasEdit">Horas:</label>
-              <input
-                type="number"
-                id="horasEdit"
-                value={horasEdit}
-                onChange={(e) => setHorasEdit(e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <label htmlFor="precioMaterialesEdit">Precio de Materiales:</label>
-              <input
-                type="number"
-                id="precioMaterialesEdit"
-                value={precioMaterialesEdit}
-                onChange={(e) => setPrecioMaterialesEdit(e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </>
-        ) : null}
-      </div>
-      <button
-        className="bg-blue-700 text-white m-2 rounded-lg p-2 font-bold"
-        onClick={handleUpdateTrabajo}
-      >
-        Guardar
-      </button>
-      <button
-        className="bg-red-500 text-white m-2 rounded-lg p-2 font-bold"
-        onClick={() => setEditarModal(false)}
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-)}
-
-
-
-  </li>
-))}
-
+                {editarModal &&
+                  trabajoSeleccionado &&
+                  trabajoSeleccionado.id_trabajo === trabajo.id_trabajo && (
+                    <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-30 flex justify-center items-center">
+                      <div className="bg-white p-5 rounded flex flex-col justify-center items-center gap-5">
+                        <h4 className="text-lg font-bold">Editar Trabajo</h4>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                          <div>
+                            <label htmlFor="tituloEdit">Título:</label>
+                            <input
+                              type="text"
+                              id="tituloEdit"
+                              value={tituloEdit}
+                              onChange={(e) => setTituloEdit(e.target.value)}
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="descripcionEdit">
+                              Descripción:
+                            </label>
+                            <textarea
+                              id="descripcionEdit"
+                              value={descripcionEdit}
+                              onChange={(e) =>
+                                setDescripcionEdit(e.target.value)
+                              }
+                              className="w-full p-2 border rounded"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="estatusEdit">Estatus:</label>
+                            <select
+                              id="estatusEdit"
+                              value={estatusEdit}
+                              onChange={(e) => setEstatusEdit(e.target.value)}
+                              className="w-full p-2 border rounded"
+                            >
+                              <option value="En proceso">En proceso</option>
+                              <option value="Terminado">Terminado</option>
+                            </select>
+                          </div>
+                          {estatusEdit === "En proceso" ? (
+                            <>
+                              <div>
+                                <label htmlFor="horasEdit">Horas:</label>
+                                <input
+                                  type="number"
+                                  id="horasEdit"
+                                  value={horasEdit}
+                                  onChange={(e) => setHorasEdit(e.target.value)}
+                                  className="w-full p-2 border rounded"
+                                />
+                              </div>
+                              <div>
+                                <label htmlFor="precioMaterialesEdit">
+                                  Precio de Materiales:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="precioMaterialesEdit"
+                                  value={precioMaterialesEdit}
+                                  onChange={(e) =>
+                                    setPrecioMaterialesEdit(e.target.value)
+                                  }
+                                  className="w-full p-2 border rounded"
+                                />
+                              </div>
+                            </>
+                          ) : null}
+                        </div>
+                        <button
+                          className="bg-blue-700 text-white m-2 rounded-lg p-2 font-bold"
+                          onClick={handleUpdateTrabajo}
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          className="bg-red-500 text-white m-2 rounded-lg p-2 font-bold"
+                          onClick={() => setEditarModal(false)}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

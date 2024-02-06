@@ -1,5 +1,16 @@
 const { json } = require("express");
 const connection = require("../database");
+const bcrypt = require('bcryptjs'); // Importa bcryptjs para hashear contraseñas
+
+// Define la función para hashear la contraseña
+async function hashContraseña(contraseña) {
+  const salt = await bcrypt.genSalt(10); // Genera un salt aleatorio
+  const hash = await bcrypt.hash(contraseña, salt); // Hashea la contraseña con el salt
+  return hash; // Devuelve la contraseña hasheada
+}
+
+// Ahora puedes utilizar la función hashContraseña en tu código
+
 
 function verUsuarios(request, response) {
   connection.query(`SELECT * FROM usuarios`, (error, results) => {
@@ -10,13 +21,26 @@ function verUsuarios(request, response) {
     }
   });
 }
-
-function crearUsuario(request, response) {
+async function crearUsuario(request, response) {
   const { usuario, contrasena, correo } = request.body;
+
+  // Hasheamos la contraseña antes de insertarla en la base de datos
+  const hash = await hashContraseña(contrasena);
+
+  // Verificamos si el hash coincide con la contraseña original
+  const contraseñaCoincide = await bcrypt.compare(contrasena, hash);
+
+  if (!contraseñaCoincide) {
+    console.error("Error: La contraseña no se ha guardado correctamente en la base de datos.");
+    response.status(500).json({ error: "Error interno del servidor" });
+    return;
+  } else {
+    console.log("Contraseña siusi");
+  }
 
   connection.query(
     'INSERT INTO usuarios (usuario, contrasena, correo) VALUES (?, ?, ?)',
-    [usuario, contrasena, correo],
+    [usuario, hash, correo], // Insertamos el hash de la contraseña en lugar de la contraseña original
     (error, results) => {
       if (error) {
         console.error("Error al insertar en la base de datos:", error);

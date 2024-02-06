@@ -1,35 +1,36 @@
 const { json } = require("express");
 const connection = require("../database");
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs'); 
 
 let codigo;
 
-enviarMail = async(dirreccion,coding) => {
 
+enviarMail = async(dirreccion, coding) => {
   const config = {
-      host: 'smtp.gmail.com',
-      port: 587,
-      auth: {
-          user: 'rafaelmonje1331@gmail.com',
-          pass: 'sljy ihgq hknf tdyc',
-      }
+    host: 'smtp.gmail.com',
+    port: 587,
+    auth: {
+      user: 'rafaelmonje1331@gmail.com',
+      pass: 'sljy ihgq hknf tdyc',
+    }
   }
   const mensaje = {
-      from: 'rafaelmonje1331@gmail.com',
-      to: `${dirreccion}`,
-      subject: 'MecanicApp validacion',
-      text: `Detectamos que estas intentando iniciar sesion en MecanicApp; para confirmar que eres tu, ingresa el siguiente codigo --> "${coding}" <-- esta accion se realiza por seguridad`
+    from: 'rafaelmonje1331@gmail.com',
+    to: `${dirreccion}`,
+    subject: 'MecanicApp validacion',
+    text: `Detectamos que estas intentando iniciar sesion en MecanicApp; para confirmar que eres tu, ingresa el siguiente codigo --> "${coding}" <-- esta accion se realiza por seguridad`
   }
   const transport = nodemailer.createTransport(config);
 
-  const info =  await transport.sendMail(mensaje);
+  const info = await transport.sendMail(mensaje);
   console.log(info);
   console.log("---------------");
 }
 
+
 function generarCodigoAleatorio() {
-  const caracteres =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   codigo = "";
 
   for (let i = 0; i < 6; i++) {
@@ -42,14 +43,14 @@ function generarCodigoAleatorio() {
   return codigo;
 }
 
-function Login(request, response) {
+async function Login(request, response) {
   const email = request.body.correo;
   const password = request.body.contrasena;
 
   connection.query(
-    `SELECT usuarios.id_usuario, usuarios.rol FROM usuarios WHERE correo = ? AND contrasena = ?`,
-    [email, password],
-    (error, result) => {
+    `SELECT usuarios.id_usuario, usuarios.rol, usuarios.contrasena FROM usuarios WHERE correo = ?`,
+    [email],
+    async (error, result) => {
       if (result.length === 0) {
         response.status(200).json({
           respuesta: "No se encontró un usuario con esos datos",
@@ -57,7 +58,17 @@ function Login(request, response) {
         });
       } else {
         const userId = result[0].id_usuario;
-        
+
+        const contraseñaCoincide = await bcrypt.compare(password, result[0].contrasena);
+
+        if (!contraseñaCoincide) {
+          response.status(200).json({
+            respuesta: "Contraseña incorrecta",
+            status: false,
+          });
+          return;
+        }
+
         response.status(200).json({
           respuesta: result[0],
           status: true,
@@ -65,37 +76,108 @@ function Login(request, response) {
 
         generarCodigoAleatorio();
 
+        const hash = await hashContraseña(password);
+
+        if (hash !== result[0].contrasena) {
+          console.error("Error: La contraseña no se ha guardado correctamente en la base de datos.");
+          response.status(500).json({ error: "Error interno del servidor" });
+          return;
+        }
+
         connection.query(
-          "UPDATE usuarios SET codigo = ? WHERE id_usuario = ?;",
-          [codigo, userId],
+          "UPDATE usuarios SET codigo = ?, contrasena = ? WHERE id_usuario = ?;",
+          [codigo, hash, userId],
           (errors, results) => {
-            if (error) {
+            if (errors) {
               console.error(
-                "Error al insertar el codigo de verificacion en la base de datos:",
+                "Error al insertar el código de verificación en la base de datos:",
                 errors
               );
               response
                 .status(500)
-                .json({ error: "Error interno del servidor con el codigo de validacion" });
+                .json({ error: "Error interno del servidor con el código de validación" });
             } else {
               console.log(
-                "codigo de validacion insertado correctamente en la base de datos"
+                "Código de validación insertado correctamente en la base de datos"
               );
 
-              enviarMail(email,codigo);
-              
+              enviarMail(email, codigo);
             }
           }
         );
       }
     }
   );
-
-  
 }
+
+function Login(request, response) {
+  const email = request.body.correo;
+  const password = request.body.contrasena;
+
+  connection.query(
+    `SELECT usuarios.id_usuario, usuarios.rol, usuarios.contrasena FROM usuarios WHERE correo = ?`,
+    [email],
+    async (error, result) => {
+      if (result.length === 0) {
+        response.status(200).json({
+          respuesta: "No se encontró un usuario con esos datos",
+          status: false,
+        });
+      } else {
+        const userId = result[0].id_usuario;
+
+       
+        const contraseñaCoincide = await bcrypt.compare(password, result[0].contrasena);
+
+        if (!contraseñaCoincide) {
+          response.status(200).json({
+            respuesta: "Contraseña incorrecta",
+            status: false,
+          });
+          return;
+        }
+
+        response.status(200).json({
+          respuesta: result[0],
+          status: true,
+        });
+
+        generarCodigoAleatorio();
+
+
+        const hash = await hashContraseña(password);
+
+        connection.query(
+          "UPDATE usuarios SET codigo = ?, contrasena = ? WHERE id_usuario = ?;",
+          [codigo, hash, userId],
+          (errors, results) => {
+            if (errors) {
+              console.error(
+                "Error al insertar el código de verificación en la base de datos:",
+                errors
+              );
+              response
+                .status(500)
+                .json({ error: "Error interno del servidor con el código de validación" });
+            } else {
+              console.log(
+                "Código de validación insertado correctamente en la base de datos"
+              );
+
+              enviarMail(email, codigo);
+
+            }
+          }
+        );
+      }
+    }
+  );
+}
+
+
 function confirmarLogin(request, response) {
   const { id, codigo } = request.body;
-  console.log("----> id: "+id+" codigo: "+ codigo)
+  console.log("----> id: " + id + " codigo: " + codigo)
 
   connection.query(
     'UPDATE usuarios SET acceso = 1 WHERE id_usuario = ? AND codigo = ?',
@@ -107,7 +189,7 @@ function confirmarLogin(request, response) {
       } else {
         if (results.affectedRows > 0) {
           console.log('Código del usuario es correcto');
-          response.status(200).json({ status: true,acceso:true });
+          response.status(200).json({ status: true, acceso: true });
         } else {
           console.log('Código del usuario es incorrecto');
           response.status(200).json({ status: false });
@@ -119,5 +201,5 @@ function confirmarLogin(request, response) {
 
 module.exports = {
   Login,
-  confirmarLogin, 
+  confirmarLogin,
 };

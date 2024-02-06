@@ -11,8 +11,9 @@ const Login = () => {
   const [secondStep, setSecondStep] = useState(false);
   const [userId, setUserId] = useState('');
   const [securityCode, setSecurityCode] = useState('');
-  const { isLoggedIn, login, logout } = useAuth();
-  console.log("isLoggedIn Antes: "+isLoggedIn);
+  const { login } = useAuth();
+  const [rol,setRol] = useState('');
+  
   // const handleSubmit = (e) => { 
   //   e.preventDefault();
   //   console.log(`Email: ${email}, Password: ${password}`);
@@ -30,8 +31,8 @@ const Login = () => {
     });
 
       if (response.data.status) {
-        console.log(response.data.respuesta);
-        setUserId (response.data.respuesta);
+        setUserId (response.data.respuesta.id_usuario);
+        setRol (response.data.respuesta.rol);
         
       setSecondStep (true);
         
@@ -52,7 +53,12 @@ const Login = () => {
 
       if (response.data.status) {
         login();
-      window.location.href = `/Home/${userId}`;
+        if(rol === 1){
+          return window.location.href = `/users/${userId}`;
+          
+        }
+        else{window.location.href = `/Home/${userId}`;
+      return;}
         
       } else {
         alert('Código de seguridad incorrecto. Intenta de nuevo.');

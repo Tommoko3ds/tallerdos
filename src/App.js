@@ -58,8 +58,10 @@ function App() {
               </div>
               }
             />
+            </Route>
 
             {/* Nueva ruta para la gestión de usuarios */}
+            <Route element={<ProtectedRoute isLoggedIn={useAuth().isLoggedIn}/>}>
             <Route
               path="/users/:id"
               element={
@@ -69,7 +71,8 @@ function App() {
                 </div>
               }
             />
-          </Route>
+            </Route>
+          
         </Routes>
       </div>
     </Router>

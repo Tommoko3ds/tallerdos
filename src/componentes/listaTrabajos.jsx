@@ -51,23 +51,12 @@ const ListaTrabajos = () => {
   };
   
   const handleUpdateTrabajo = async () => {
-<<<<<<< HEAD
-    
-    try {
-      if (!tituloEdit || !descripcionEdit || !tipoEdit || !estatusEdit || !horasEdit || !precioMaterialesEdit || !precioTotalEdit) {
-        alert("Por favor, complete todos los campos.");
-        return;
-      }
-      const nuevoPrecio = NuevoPrecio(); // Calcula el nuevo precio
-  
-=======
     try {
       if (!tituloEdit ) {
         alert("Por favor, complete todos los campos.");
         return;
       }
 
->>>>>>> 53373033a3b2707e353d1ff3d68650d0f6a6b009
       const response = await axios.put(
         `http://localhost:5000/api/jobs/${trabajoSeleccionado.id_trabajo}`,
         {

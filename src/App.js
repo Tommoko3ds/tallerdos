@@ -24,10 +24,10 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route element={<ProtectedRouteLogin isLoggedIn={true} />}>
+          <Route element={<ProtectedRouteLogin isLoggedIn={useAuth().isLoggedIn} />}>
             <Route path="/" element={<Login />} />
           </Route>
-          <Route element={<ProtectedRoute isLoggedIn={true}/>}>
+          <Route element={<ProtectedRoute isLoggedIn={useAuth().isLoggedIn}/>}>
             <Route
               path="/Home/:id"
               element={

@@ -5,6 +5,7 @@ import { faEdit, faEye, faTrashAlt, faPenToSquare } from "@fortawesome/free-soli
 
 const ListaTrabajos = () => {
   const [trabajos, setTrabajos] = useState([]);
+  const [precioTotalOriginal, setPrecioTotalOriginal] = useState("");
   const [editarModal, setEditarModal] = useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
   const [tituloEdit, setTituloEdit] = useState("");
@@ -16,6 +17,7 @@ const ListaTrabajos = () => {
   const[precioTotalEdit, setPrecioTotalEdit] = useState("");
   const[tipoMaterialEdit, setTipoMaterialEdit] = useState("");
     const [expandedDetails, setExpandedDetails] = useState({});
+
     
 
     useEffect(() => {
@@ -69,15 +71,24 @@ const ListaTrabajos = () => {
     setEstatusEdit(trabajoSeleccionado.estatus);
     setHorasEdit(trabajoSeleccionado.horas);
     setPrecioMaterialesEdit(trabajoSeleccionado.precioMateriales);
+    setPrecioTotalEdit(trabajoSeleccionado.precioTotal);
+    setPrecioTotalOriginal(trabajoSeleccionado.precioTotal); // Guarda el precio original
     setEditarModal(true);
   };
-  
+
+  const handleTipoTrabajoChange = (event) => {
+    setTipoEdit(event.target.value); // Cambia setTipoTrabajo a setTipoEdit
+  };
+
+
   const handleUpdateTrabajo = async () => {
     try {
       if (!tituloEdit ) {
         alert("Por favor, complete todos los campos.");
         return;
       }
+
+      const nuevoPrecio = NuevoPrecio(); // Calcula el nuevo precio
 
       const response = await axios.put(
         `http://localhost:5000/api/jobs/${trabajoSeleccionado.id_trabajo}`,
@@ -88,7 +99,7 @@ const ListaTrabajos = () => {
           tipo: tipoEdit,
           horas: horasEdit,
           precioMateriales: precioMaterialesEdit,
-          precioTotal: precioTotalEdit,
+          precioTotal: nuevoPrecio, // Actualiza el precioTotal con el nuevo precio calculado
         }
       );
       if (response.status === 200) {

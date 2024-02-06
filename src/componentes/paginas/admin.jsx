@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from '../../AuthContext';
+
 
 const UsersManagement = () => {
   const [users, setUsers] = useState([]);
@@ -42,18 +44,19 @@ const UsersManagement = () => {
       alert('Por favor, complete todos los campos.');
       return;
     }
-    try {
-      if (!username || !password || !email) {
-        alert('Por favor, complete todos los campos.');
-        return;
-      }
+  
+    if (password.length < 8) {
+      alert('La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
 
+    try {
       const response = await axios.post('http://localhost:5000/users/usuarios', {
         usuario: username,
         contrasena: password,
         correo: email,
       });
-
+  
       if (response.status === 200) {
         fetchUsers();
         setUsername('');
@@ -111,6 +114,7 @@ const UsersManagement = () => {
       console.error('Error de red al actualizar usuario:', error);
     }
   };
+
   const handleDeleteUser = async (userId) => {
     const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este usuario?");
   
@@ -119,6 +123,13 @@ const UsersManagement = () => {
         const response = await axios.delete(`http://localhost:5000/users/usuarios/${userId}`);
   
         if (response.status === 200) {
+          // Verifica si el usuario que se eliminó es el mismo que está logeado
+          const { loggedInUserId } = useAuth(); // Asegúrate de tener una función o estado que devuelva el ID del usuario logeado
+          if (userId === loggedInUserId) {
+            // Si el usuario eliminado es el mismo que está logeado, cierra la sesión
+            useAuth().logout();
+          }
+  
           fetchUsers();
         } else {
           console.error('Error al eliminar usuario:', response.data.error);
@@ -128,11 +139,12 @@ const UsersManagement = () => {
       }
     }
   };
+  
 
   return (
 
     
-    <div className="mt-10">
+    <div className="m-8">
        <h3 className="text-xl font-bold mb-4">Listado de Usuarios</h3>
        <div className='float-right '>
 

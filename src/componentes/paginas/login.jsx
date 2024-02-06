@@ -20,52 +20,59 @@ const Login = () => {
   // };
   const Login = async () => {
     const escapedEmail = escape(email);
-    const escapedPassword = escape(password); 
-    
-
+    const escapedPassword = escape(password);
+  
     try {
       const response = await axios.post("http://localhost:5000/login/", {
-      correo: escapedEmail,
-      contrasena: escapedPassword,
-      
-    });
-
+        correo: escapedEmail,
+        contrasena: escapedPassword,
+      });
+  
       if (response.data.status) {
-        setUserId (response.data.respuesta.id_usuario);
-        setRol (response.data.respuesta.rol);
-        
-      setSecondStep (true);
-        
+        setUserId(response.data.respuesta.id_usuario);
+        setRol(response.data.respuesta.rol);
+        setSecondStep(true);
       } else {
-        alert("Prueba con otro correo o contraseña");
+        alert("Correo o contraseña incorrectos. Prueba con otro.");
       }
     } catch (error) {
       console.error("Error al autenticar el usuario:", error);
     }
   };
-
+  
   const ConfirmLogin = async () => {
     try {
       const response = await axios.post("http://localhost:5000/login/confirmar", {
         id: userId,
         codigo: securityCode,
       });
-
+  
       if (response.data.status) {
         login();
-        if(rol === 1){
-          return window.location.href = `/users/${userId}`;
-          
+        if (rol === 1) {
+          window.location.href = `/users/${userId}`;
+        } else {
+          window.location.href = `/Home/${userId}`;
         }
-        else{window.location.href = `/Home/${userId}`;
-      return;}
-        
       } else {
-        alert('Código de seguridad incorrecto. Intenta de nuevo.');
+        alert("Código de seguridad incorrecto. Intenta de nuevo.");
       }
     } catch (error) {
       console.error("Error al confirmar el login:", error);
     }
+  };
+  
+  const handleLogin = (e) => {
+    e.preventDefault();
+  
+    // Validar campos vacíos
+    if (!email || !password) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+  
+    // Llamar a la función de inicio de sesión
+    Login();
   };
 
   return (

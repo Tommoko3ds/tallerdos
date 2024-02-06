@@ -106,7 +106,7 @@ function confirmarLogin(request, response) {
       } else {
         if (results.affectedRows > 0) {
           console.log('Código del usuario es correcto');
-          response.status(200).json({ status: true });
+          response.status(200).json({ status: true,acceso:true });
         } else {
           console.log('Código del usuario es incorrecto');
           response.status(200).json({ status: false });

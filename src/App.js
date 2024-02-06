@@ -20,7 +20,7 @@ function App() {
   const closeModal = () => setShowModal(false);
 
   return (
-    <AuthProvider>
+    
     <Router>
       <div>
         <Routes>
@@ -73,7 +73,7 @@ function App() {
         </Routes>
       </div>
     </Router>
-    </AuthProvider>
+  
   );
 }
 

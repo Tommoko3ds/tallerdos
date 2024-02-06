@@ -51,12 +51,9 @@ const Login = () => {
       });
 
       if (response.data.status) {
-        // Autenticación exitosa, redirigir a la página de inicio
         login();
-        setTimeout(() => {
-          console.log("isLoggedIn Después: " + isLoggedIn);
-          window.location.href = `/Home/${userId}`;
-        }, 100);
+      window.location.href = `/Home/${userId}`;
+        
       } else {
         alert('Código de seguridad incorrecto. Intenta de nuevo.');
       }

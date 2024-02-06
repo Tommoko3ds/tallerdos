@@ -20,7 +20,7 @@ export const ProtectedRoute = ({ isLoggedIn, redirectPath = '/' }) => {
 
 
 
-export const ProtectedRouteLogin = ({isLoggedIn, redirectPath = "/Home/:id" }) => {
+export const ProtectedRouteLogin = ({ isLoggedIn,redirectPath = "/Home/:id" }) => {
 
 
  if (isLoggedIn) {

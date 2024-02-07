@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';
+
 
 
 const UsersManagement = ()=> {
@@ -12,6 +15,10 @@ const UsersManagement = ()=> {
   const [email, setEmail] = useState('');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { myId } = useParams();
+  const { logout} = useAuth();
+
+
 
   useEffect(() => {
     fetchUsers();
@@ -122,6 +129,9 @@ const UsersManagement = ()=> {
   
         if (response.status === 200) {
           fetchUsers();
+          if(userId === myId) {
+            logout();
+          }
         } else {
           console.error('Error al eliminar usuario:', response.data.error);
         }

@@ -15,10 +15,11 @@ const UsersManagement = ()=> {
   const [email, setEmail] = useState('');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { myId } = useParams();
+  const { id } = useParams();
+  const myId = parseInt(id);
   const { logout} = useAuth();
 
-
+console.log(id);
 
   useEffect(() => {
     fetchUsers();
@@ -125,19 +126,22 @@ const UsersManagement = ()=> {
   
     if (confirmDelete) {
       try {
+        if (userId === myId) {
+          console.log("activando el logout")
+          logout(); // Realizar el logout si los IDs coinciden
+        }
+      
         const response = await axios.delete(`http://localhost:5000/users/usuarios/${userId}`);
-  
+      
         if (response.status === 200) {
           fetchUsers();
-          if(userId === myId) {
-            logout();
-          }
         } else {
           console.error('Error al eliminar usuario:', response.data.error);
         }
       } catch (error) {
         console.error(`Error de red al eliminar usuario con ID ${userId}:`, error);
       }
+      
     }
   };
 

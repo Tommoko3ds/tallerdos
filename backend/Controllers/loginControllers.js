@@ -43,80 +43,14 @@ function generarCodigoAleatorio() {
   return codigo;
 }
 
-async function Login(request, response) {
-  const email = request.body.correo;
-  const password = request.body.contrasena;
-
-  connection.query(
-    `SELECT usuarios.id_usuario, usuarios.rol, usuarios.contrasena FROM usuarios WHERE correo = ?`,
-    [email],
-    async (error, result) => {
-      if (result.length === 0) {
-        response.status(200).json({
-          respuesta: "No se encontró un usuario con esos datos",
-          status: false,
-        });
-      } else {
-        const userId = result[0].id_usuario;
-
-        const contraseñaCoincide = await bcrypt.compare(password, result[0].contrasena);
-
-        if (!contraseñaCoincide) {
-          response.status(200).json({
-            respuesta: "Contraseña incorrecta",
-            status: false,
-          });
-          return;
-        }
-
-        response.status(200).json({
-          respuesta: result[0],
-          status: true,
-        });
-
-        generarCodigoAleatorio();
-
-        const hash = await hashContraseña(password);
-
-        if (hash !== result[0].contrasena) {
-          console.error("Error: La contraseña no se ha guardado correctamente en la base de datos.");
-          response.status(500).json({ error: "Error interno del servidor" });
-          return;
-        }
-
-        connection.query(
-          "UPDATE usuarios SET codigo = ?, contrasena = ? WHERE id_usuario = ?;",
-          [codigo, hash, userId],
-          (errors, results) => {
-            if (errors) {
-              console.error(
-                "Error al insertar el código de verificación en la base de datos:",
-                errors
-              );
-              response
-                .status(500)
-                .json({ error: "Error interno del servidor con el código de validación" });
-            } else {
-              console.log(
-                "Código de validación insertado correctamente en la base de datos"
-              );
-
-              enviarMail(email, codigo);
-            }
-          }
-        );
-      }
-    }
-  );
-}
 
 function Login(request, response) {
   const email = request.body.correo;
   const password = request.body.contrasena;
 
   connection.query(
-    `SELECT usuarios.id_usuario, usuarios.rol, usuarios.contrasena FROM usuarios WHERE correo = ?`,
-    [email],
+    `SELECT usuarios.id_usuario, usuarios.rol, usuarios.contrasena FROM usuarios WHERE correo =? AND contrasena=?`,
+    [email,password],
     async (error, result) => {
       if (result.length === 0) {
         response.status(200).json({
@@ -125,18 +59,6 @@ function Login(request, response) {
         });
       } else {
         const userId = result[0].id_usuario;
-
-       
-        const contraseñaCoincide = await bcrypt.compare(password, result[0].contrasena);
-
-        if (!contraseñaCoincide) {
-          response.status(200).json({
-            respuesta: "Contraseña incorrecta",
-            status: false,
-          });
-          return;
-        }
-
         response.status(200).json({
           respuesta: result[0],
           status: true,

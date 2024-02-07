@@ -67,8 +67,8 @@ function Login(request, response) {
         generarCodigoAleatorio();
 
         connection.query(
-          "UPDATE usuarios SET codigo = ?, contrasena = ? WHERE id_usuario = ?;",
-          [codigo, hash, userId],
+          "UPDATE usuarios SET codigo = ? WHERE id_usuario = ?;",
+          [codigo, userId],
           (errors, results) => {
             if (errors) {
               console.error(

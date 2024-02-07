@@ -66,9 +66,6 @@ function Login(request, response) {
 
         generarCodigoAleatorio();
 
-
-        const hash = await hashContraseña(password);
-
         connection.query(
           "UPDATE usuarios SET codigo = ?, contrasena = ? WHERE id_usuario = ?;",
           [codigo, hash, userId],
